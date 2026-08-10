@@ -148,7 +148,8 @@ const initialMaterials = [
     packCount: 100,
     packSize: 1,
     totalPrice: 60,
-    conversion: null
+    conversion: null,
+    isTopping: false
   },
   {
     id: "m7",
@@ -157,7 +158,18 @@ const initialMaterials = [
     packCount: 1,
     packSize: 1e3,
     totalPrice: 280,
-    conversion: null
+    conversion: null,
+    isTopping: false
+  },
+  {
+    id: "m8",
+    name: "\u73CD\u73E0",
+    purchaseUnit: "\u514B",
+    packCount: 1,
+    packSize: 5e3,
+    totalPrice: 450,
+    conversion: null,
+    isTopping: true
   }
 ];
 const initialToppings = [
@@ -180,6 +192,7 @@ const initialRecipes = [
     ingredients: [
       { materialId: "m1", qty: 400, kind: "material" },
       { materialId: "m2", qty: 200, kind: "material" },
+      { materialId: "m8", qty: 30, kind: "topping" },
       { materialId: "m5", qty: 1, kind: "material" },
       { materialId: "m6", qty: 1, kind: "material" }
     ]
@@ -224,15 +237,22 @@ function getToppingCost(topping, materials) {
   }, 0);
   const yieldQty = Number(topping?.yieldQty) || 0;
   const unitCost = yieldQty > 0 ? totalCost / yieldQty : 0;
-  return { totalCost, unitCost };
+  return { totalCost, unitCost, unit: topping?.yieldUnit || "" };
 }
 function getIngredientInfo(ing, materials, toppings) {
   const kind = ing.kind || "material";
   if (kind === "topping") {
     const t = toppings.find((x) => x.id === ing.materialId);
-    if (!t) return { name: "\uFF08\u52A0\u6599\u5DF2\u522A\u9664\uFF09", unit: "", cost: 0 };
-    const tc = getToppingCost(t, materials);
-    return { name: t.name, unit: t.yieldUnit, cost: tc.unitCost };
+    if (t) {
+      const tc = getToppingCost(t, materials);
+      return { name: t.name, unit: tc.unit, cost: tc.unitCost };
+    }
+    const flaggedM = materials.find((x) => x.id === ing.materialId && x.isTopping);
+    if (flaggedM) {
+      const eff2 = getEffective(flaggedM);
+      return { name: flaggedM.name, unit: eff2.unit, cost: eff2.cost };
+    }
+    return { name: "\uFF08\u52A0\u6599\u5DF2\u522A\u9664\uFF09", unit: "", cost: 0 };
   }
   const m = materials.find((x) => x.id === ing.materialId);
   if (!m) return { name: "\uFF08\u7269\u6599\u5DF2\u522A\u9664\uFF09", unit: "", cost: 0 };
@@ -451,7 +471,8 @@ function Materials({ materials, setMaterials }) {
     hasConversion: false,
     convInputQty: "",
     convOutputQty: "",
-    convOutputUnit: "\u6BEB\u5347"
+    convOutputUnit: "\u6BEB\u5347",
+    isTopping: false
   };
   const [form, setForm] = useState(emptyForm);
   const filteredMaterials = materials.filter(
@@ -471,7 +492,8 @@ function Materials({ materials, setMaterials }) {
       hasConversion: !!m.conversion,
       convInputQty: m.conversion ? String(m.conversion.inputQty) : "",
       convOutputQty: m.conversion ? String(m.conversion.outputQty) : "",
-      convOutputUnit: m.conversion ? m.conversion.outputUnit : "\u6BEB\u5347"
+      convOutputUnit: m.conversion ? m.conversion.outputUnit : "\u6BEB\u5347",
+      isTopping: !!m.isTopping
     });
     setEditing(m.id);
   };
@@ -494,7 +516,8 @@ function Materials({ materials, setMaterials }) {
       packCount: packCountNum,
       packSize: packSizeNum,
       totalPrice: totalPriceNum,
-      conversion
+      conversion,
+      isTopping: form.isTopping
     };
     if (editing === "new") {
       setMaterials((prev) => [...prev, { id: uid(), ...data }]);
@@ -534,7 +557,7 @@ function Materials({ materials, setMaterials }) {
         onClick: () => setViewing(m.id),
         className: "px-3 py-2.5 flex items-center justify-between text-sm gap-2 cursor-pointer hover:bg-stone-50 active:bg-stone-100"
       },
-      /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate" }, m.name), detailLine && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono leading-relaxed" }, detailLine)),
+      /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate flex items-center gap-1" }, m.name, m.isTopping && /* @__PURE__ */ React.createElement(Droplet, { size: 11, className: "text-teal-500 shrink-0" })), detailLine && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono leading-relaxed" }, detailLine)),
       /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 shrink-0" }, /* @__PURE__ */ React.createElement("span", { className: "font-mono text-sm text-teal-700 font-semibold" }, "$", unitMoney(eff.cost), "/", eff.unit), /* @__PURE__ */ React.createElement(ChevronRight, { size: 16, className: "text-stone-300" }))
     );
   }), materials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u5C1A\u672A\u65B0\u589E\u4EFB\u4F55\u7269\u6599"), materials.length > 0 && filteredMaterials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u7269\u6599")), viewing && (() => {
@@ -660,13 +683,35 @@ function Materials({ materials, setMaterials }) {
       },
       UNIT_OPTIONS.map((u) => /* @__PURE__ */ React.createElement("option", { key: u, value: u }, u))
     )), convOutputNum > 0 && purchaseUnitCostDraft > 0 && /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, form.convInputQty, form.purchaseUnit, " \xD7 $", unitMoney(purchaseUnitCostDraft), " = $", money(inputCostDraft), "\uFF0C\u505A\u51FA ", form.convOutputQty, form.convOutputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", form.convOutputUnit, "\u6210\u672C $", unitMoney(convertedCostDraft)))),
+    /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        type: "button",
+        onClick: () => setForm({ ...form, isTopping: !form.isTopping }),
+        className: `w-full flex items-center justify-between px-3 py-2.5 rounded-md border mb-3 transition-colors ${form.isTopping ? "bg-teal-50 border-teal-300" : "bg-white border-stone-300"}`
+      },
+      /* @__PURE__ */ React.createElement("span", { className: "flex items-center gap-2 text-sm text-stone-700" }, /* @__PURE__ */ React.createElement(Droplet, { size: 15, className: form.isTopping ? "text-teal-600" : "text-stone-400" }), "\u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528"),
+      /* @__PURE__ */ React.createElement(
+        "span",
+        {
+          className: `w-9 h-5 rounded-full relative shrink-0 transition-colors ${form.isTopping ? "bg-teal-600" : "bg-stone-300"}`
+        },
+        /* @__PURE__ */ React.createElement(
+          "span",
+          {
+            className: `absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${form.isTopping ? "right-0.5" : "left-0.5"}`
+          }
+        )
+      )
+    ),
+    /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-2 mb-3 leading-relaxed" }, "\u958B\u555F\u5F8C\uFF0C\u65B0\u589E\u914D\u65B9\u6642\u7684\u300C\u52A0\u6599\u300D\u9078\u9805\u88E1\u6703\u76F4\u63A5\u770B\u5230\u9019\u9805\u7269\u6599\uFF0C\u4F8B\u5982\u73CD\u73E0\u3001\u6930\u679C\u9019\u7A2E\u8CB7\u73FE\u6210\u7684\u52A0\u6599\u5C31\u9069\u5408\u958B\u9019\u500B\uFF0C\u4E0D\u7528\u53E6\u5916\u5728\u300C\u52A0\u6599\u300D\u5206\u9801\u91CD\u8907\u5EFA\u7ACB\u3002"),
     /* @__PURE__ */ React.createElement("button", { onClick: save, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " \u5132\u5B58")
   ));
 }
 function MaterialDetailModal({ material, onClose, onEdit }) {
   const eff = getEffective(material);
   const totalQty = (material.packCount || 1) * (material.packSize || 0);
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599"));
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, material.isTopping && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(Droplet, { size: 13 }), " \u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528"), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599"));
 }
 function Toppings({ materials, toppings, setToppings }) {
   const [editing, setEditing] = useState(null);
@@ -852,6 +897,10 @@ function Recipes({ materials, toppings, recipes, setRecipes, recipeCost }) {
   const [viewing, setViewing] = useState(null);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({ name: "", sellPrice: "", ingredients: [] });
+  const toppingOptions = [
+    ...toppings.map((t) => ({ id: t.id, name: t.name })),
+    ...materials.filter((m) => m.isTopping).map((m) => ({ id: m.id, name: m.name }))
+  ];
   const filteredRecipes = recipes.filter(
     (r) => r.name.toLowerCase().includes(search.trim().toLowerCase())
   );
@@ -1001,7 +1050,7 @@ function Recipes({ materials, toppings, recipes, setRecipes, recipeCost }) {
           className: "input flex-1"
         },
         /* @__PURE__ */ React.createElement("optgroup", { label: "\u7269\u6599" }, materials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: `material:${mm.id}`, value: `material:${mm.id}` }, mm.name))),
-        toppings.length > 0 && /* @__PURE__ */ React.createElement("optgroup", { label: "\u52A0\u6599" }, toppings.map((tt) => /* @__PURE__ */ React.createElement("option", { key: `topping:${tt.id}`, value: `topping:${tt.id}` }, tt.name)))
+        toppingOptions.length > 0 && /* @__PURE__ */ React.createElement("optgroup", { label: "\u52A0\u6599" }, toppingOptions.map((tt) => /* @__PURE__ */ React.createElement("option", { key: `topping:${tt.id}`, value: `topping:${tt.id}` }, tt.name)))
       ), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1 shrink-0" }, /* @__PURE__ */ React.createElement(
         "input",
         {
