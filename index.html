@@ -7,7 +7,6 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Firebase：跟排班系統共用同一個專案，只是多開一個 collection -->
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <style>
@@ -25,8 +24,6 @@
   </div>
 </div>
 <script>
-  // 萬一有任何外部程式（React／Babel／Tailwind／Firebase）載入失敗，
-  // 或程式執行途中出錯，直接把錯誤訊息顯示在畫面上，而不是留一片空白。
   window.__appMounted = false;
   window.addEventListener('error', function (e) {
     if (window.__appMounted) return;
@@ -97,20 +94,111 @@ const BarChart3 = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p },
 const Cloud = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("path", { d: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" }));
 const Search = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("line", { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }));
 const ChevronRight = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "9 18 15 12 9 6" }));
+const Droplet = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("path", { d: "M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" }));
 const initialMaterials = [
-  { id: "m1", name: "\u7D05\u8336\u8449", purchaseUnit: "\u514B", packCount: 2, packSize: 6e3, totalPrice: 13500, conversion: { inputQty: 80, outputQty: 6500, outputUnit: "\u6BEB\u5347" } },
-  { id: "m2", name: "\u9BAE\u5976", purchaseUnit: "\u6BEB\u5347", packCount: 24, packSize: 1e3, totalPrice: 1200, conversion: null },
-  { id: "m3", name: "\u6885\u5B50\u6C41", purchaseUnit: "\u6BEB\u5347", packCount: 12, packSize: 550, totalPrice: 960, conversion: null },
-  { id: "m4", name: "\u7DA0\u8336\u7C89", purchaseUnit: "\u514B", packCount: 1, packSize: 225, totalPrice: 180, conversion: null },
-  { id: "m5", name: "\u5927\u676F\uFF08700ml\uFF09", purchaseUnit: "\u500B", packCount: 50, packSize: 1, totalPrice: 115, conversion: null },
-  { id: "m6", name: "\u5C01\u819C", purchaseUnit: "\u500B", packCount: 100, packSize: 1, totalPrice: 60, conversion: null }
+  {
+    id: "m1",
+    name: "\u7D05\u8336\u8449",
+    purchaseUnit: "\u514B",
+    packCount: 2,
+    packSize: 6e3,
+    totalPrice: 13500,
+    conversion: { inputQty: 80, outputQty: 6500, outputUnit: "\u6BEB\u5347" }
+  },
+  {
+    id: "m2",
+    name: "\u9BAE\u5976",
+    purchaseUnit: "\u6BEB\u5347",
+    packCount: 24,
+    packSize: 1e3,
+    totalPrice: 1200,
+    conversion: null
+  },
+  {
+    id: "m3",
+    name: "\u6885\u5B50\u6C41",
+    purchaseUnit: "\u6BEB\u5347",
+    packCount: 12,
+    packSize: 550,
+    totalPrice: 960,
+    conversion: null
+  },
+  {
+    id: "m4",
+    name: "\u7DA0\u8336\u7C89",
+    purchaseUnit: "\u514B",
+    packCount: 1,
+    packSize: 225,
+    totalPrice: 180,
+    conversion: null
+  },
+  {
+    id: "m5",
+    name: "\u5927\u676F\uFF08700ml\uFF09",
+    purchaseUnit: "\u500B",
+    packCount: 50,
+    packSize: 1,
+    totalPrice: 115,
+    conversion: null
+  },
+  {
+    id: "m6",
+    name: "\u5C01\u819C",
+    purchaseUnit: "\u500B",
+    packCount: 100,
+    packSize: 1,
+    totalPrice: 60,
+    conversion: null
+  },
+  {
+    id: "m7",
+    name: "\u539F\u5473\u51CD\u7C89",
+    purchaseUnit: "\u514B",
+    packCount: 1,
+    packSize: 1e3,
+    totalPrice: 280,
+    conversion: null
+  }
+];
+const initialToppings = [
+  {
+    id: "t1",
+    name: "\u6885\u5B50\u51CD",
+    ingredients: [
+      { materialId: "m7", qty: 200 },
+      { materialId: "m3", qty: 800 }
+    ],
+    yieldQty: 1e3,
+    yieldUnit: "\u514B"
+  }
 ];
 const initialRecipes = [
-  { id: "r1", name: "\u62DB\u724C\u7D05\u8336\u62FF\u9435", sellPrice: 55, ingredients: [{ materialId: "m1", qty: 400 }, { materialId: "m2", qty: 200 }, { materialId: "m5", qty: 1 }, { materialId: "m6", qty: 1 }] },
-  { id: "r2", name: "\u6885\u5B50\u7DA0\u8336", sellPrice: 48, ingredients: [{ materialId: "m4", qty: 15 }, { materialId: "m3", qty: 100 }, { materialId: "m5", qty: 1 }, { materialId: "m6", qty: 1 }] }
+  {
+    id: "r1",
+    name: "\u62DB\u724C\u7D05\u8336\u62FF\u9435",
+    sellPrice: 55,
+    ingredients: [
+      { materialId: "m1", qty: 400, kind: "material" },
+      { materialId: "m2", qty: 200, kind: "material" },
+      { materialId: "m5", qty: 1, kind: "material" },
+      { materialId: "m6", qty: 1, kind: "material" }
+    ]
+  },
+  {
+    id: "r2",
+    name: "\u6885\u5B50\u7DA0\u8336",
+    sellPrice: 48,
+    ingredients: [
+      { materialId: "m4", qty: 15, kind: "material" },
+      { materialId: "m3", qty: 100, kind: "material" },
+      { materialId: "t1", qty: 80, kind: "topping" },
+      { materialId: "m5", qty: 1, kind: "material" },
+      { materialId: "m6", qty: 1, kind: "material" }
+    ]
+  }
 ];
 const uid = () => Math.random().toString(36).slice(2, 10);
-const UNIT_OPTIONS = ["\u514B", "\u6BEB\u5347", "\u500B", "\u4EFD", "\u5305", "\u7F50", "\u74F6", "\u689D", "\u652F", "\u9846", "\u6876", "\u758A", "\u7D44"];
+const UNIT_OPTIONS = ["\u514B", "\u6BEB\u5347", "\u500B", "\u4EFD", "\u5305", "\u888B", "\u7F50", "\u74F6", "\u689D", "\u652F", "\u9846", "\u6876", "\u758A", "\u7D44"];
 const money = (n) => (Math.round((n || 0) * 100) / 100).toLocaleString("zh-TW", { maximumFractionDigits: 2 });
 const unitMoney = (n) => {
   const v = Number(n) || 0;
@@ -128,10 +216,61 @@ function getEffective(m) {
   }
   return { unit: m.purchaseUnit, cost: purchaseCost, purchaseUnit: m.purchaseUnit, purchaseCost };
 }
+function getToppingCost(topping, materials) {
+  const totalCost = (topping?.ingredients || []).reduce((sum, ing) => {
+    const m = materials.find((x) => x.id === ing.materialId);
+    const eff = getEffective(m);
+    return sum + eff.cost * (Number(ing.qty) || 0);
+  }, 0);
+  const yieldQty = Number(topping?.yieldQty) || 0;
+  const unitCost = yieldQty > 0 ? totalCost / yieldQty : 0;
+  return { totalCost, unitCost };
+}
+function getIngredientInfo(ing, materials, toppings) {
+  const kind = ing.kind || "material";
+  if (kind === "topping") {
+    const t = toppings.find((x) => x.id === ing.materialId);
+    if (!t) return { name: "\uFF08\u52A0\u6599\u5DF2\u522A\u9664\uFF09", unit: "", cost: 0 };
+    const tc = getToppingCost(t, materials);
+    return { name: t.name, unit: t.yieldUnit, cost: tc.unitCost };
+  }
+  const m = materials.find((x) => x.id === ing.materialId);
+  if (!m) return { name: "\uFF08\u7269\u6599\u5DF2\u522A\u9664\uFF09", unit: "", cost: 0 };
+  const eff = getEffective(m);
+  return { name: m.name, unit: eff.unit, cost: eff.cost };
+}
+function PerfEdge({ flip }) {
+  return /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      className: flip ? "rotate-180" : "",
+      style: {
+        height: 10,
+        backgroundImage: "radial-gradient(circle at 9px 0px, #D6D3D1 6px, transparent 6.5px)",
+        backgroundSize: "18px 12px",
+        backgroundRepeat: "repeat-x",
+        backgroundPosition: "0 -6px"
+      }
+    }
+  );
+}
+function Dashed() {
+  return /* @__PURE__ */ React.createElement("div", { className: "border-t border-dashed border-stone-300 my-3" });
+}
+function Money({ value, className = "" }) {
+  return /* @__PURE__ */ React.createElement("span", { className: `font-mono tabular-nums ${className}` }, "$", money(value));
+}
 function loadInitialData() {
   try {
     const saved = window.localStorage.getItem("cost-tracker-data");
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        materials: parsed.materials || initialMaterials,
+        recipes: parsed.recipes || initialRecipes,
+        toppings: parsed.toppings || initialToppings
+      };
+    }
   } catch (e) {
   }
   try {
@@ -140,12 +279,13 @@ function loadInitialData() {
     if (oldM || oldR) {
       return {
         materials: oldM ? JSON.parse(oldM) : initialMaterials,
-        recipes: oldR ? JSON.parse(oldR) : initialRecipes
+        recipes: oldR ? JSON.parse(oldR) : initialRecipes,
+        toppings: initialToppings
       };
     }
   } catch (e) {
   }
-  return { materials: initialMaterials, recipes: initialRecipes };
+  return { materials: initialMaterials, recipes: initialRecipes, toppings: initialToppings };
 }
 function useSyncedState(syncCode) {
   const [state, setState] = useState(loadInitialData);
@@ -163,7 +303,12 @@ function useSyncedState(syncCode) {
     const unsub = ref.onSnapshot(
       (snap) => {
         if (snap.exists) {
-          setState(snap.data());
+          const remote = snap.data();
+          setState({
+            materials: remote.materials || [],
+            recipes: remote.recipes || [],
+            toppings: remote.toppings || []
+          });
         } else {
           ref.set(stateRef.current);
         }
@@ -182,15 +327,6 @@ function useSyncedState(syncCode) {
     });
   };
   return [state, update];
-}
-function PerfEdge({ flip }) {
-  return /* @__PURE__ */ React.createElement("div", { className: flip ? "rotate-180" : "", style: { height: 10, backgroundImage: "radial-gradient(circle at 9px 0px, #D6D3D1 6px, transparent 6.5px)", backgroundSize: "18px 12px", backgroundRepeat: "repeat-x", backgroundPosition: "0 -6px" } });
-}
-function Dashed() {
-  return /* @__PURE__ */ React.createElement("div", { className: "border-t border-dashed border-stone-300 my-3" });
-}
-function Money({ value, className = "" }) {
-  return /* @__PURE__ */ React.createElement("span", { className: `font-mono tabular-nums ${className}` }, "$", money(value));
 }
 function CostTracker() {
   const [tab, setTab] = useState("overview");
@@ -211,42 +347,69 @@ function CostTracker() {
   };
   const [data, updateData] = useSyncedState(syncCode);
   const materials = data.materials;
+  const toppings = data.toppings;
   const recipes = data.recipes;
   const setMaterials = (updater) => updateData((prev) => ({ ...prev, materials: typeof updater === "function" ? updater(prev.materials) : updater }));
+  const setToppings = (updater) => updateData((prev) => ({ ...prev, toppings: typeof updater === "function" ? updater(prev.toppings) : updater }));
   const setRecipes = (updater) => updateData((prev) => ({ ...prev, recipes: typeof updater === "function" ? updater(prev.recipes) : updater }));
-  const materialMap = useMemo(() => Object.fromEntries(materials.map((m) => [m.id, m])), [materials]);
   const recipeCost = (r) => r.ingredients.reduce((sum, ing) => {
-    const m = materialMap[ing.materialId];
-    const eff = getEffective(m);
-    return sum + (m ? eff.cost * ing.qty : 0);
+    const info = getIngredientInfo(ing, materials, toppings);
+    return sum + info.cost * ing.qty;
   }, 0);
   const tabs = [
     { id: "overview", label: "\u7E3D\u89BD", icon: BarChart3 },
     { id: "materials", label: "\u7269\u6599\u6210\u672C", icon: Package },
+    { id: "toppings", label: "\u52A0\u6599", icon: Droplet },
     { id: "recipes", label: "\u914D\u65B9\u6210\u672C", icon: Coffee }
   ];
-  return /* @__PURE__ */ React.createElement("div", { className: "h-screen bg-stone-200 flex justify-center px-3 py-6 overflow-hidden", style: { height: "100dvh" } }, /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-md flex flex-col min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 rounded-t-sm shadow-lg overflow-hidden flex flex-col flex-1 min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, null)), /* @__PURE__ */ React.createElement("header", { className: "px-5 pt-1 pb-4 text-center shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs tracking-widest text-stone-500 font-mono mt-2" }, "MATERIAL COST LEDGER"), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-black text-stone-800 tracking-tight mt-1" }, "\u7269\u6599\u6210\u672C"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1 font-mono" }, "\u54C1\u9805 ", materials.length, " \xB7 \u914D\u65B9 ", recipes.length), /* @__PURE__ */ React.createElement(
-    "button",
+  return /* @__PURE__ */ React.createElement(
+    "div",
     {
-      onClick: () => setSyncModalOpen(true),
-      className: `mt-2 inline-flex items-center gap-1 text-xs rounded-full px-3 py-1 border ${syncCode && dbReady ? "text-teal-700 border-teal-200 hover:bg-teal-50" : syncCode && !dbReady ? "text-amber-700 border-amber-300 hover:bg-amber-50" : "text-stone-500 border-stone-300 hover:bg-stone-100"}`
+      className: "h-screen bg-stone-200 flex justify-center px-3 py-6 overflow-hidden",
+      style: { height: "100dvh" }
     },
-    /* @__PURE__ */ React.createElement(Cloud, { size: 12 }),
-    syncCode ? dbReady ? `\u5DF2\u540C\u6B65\uFF1A${syncCode}` : "\u4EE3\u78BC\u5DF2\u8A2D\u5B9A\uFF0C\u5F85\u9023\u63A5 Firebase" : "\u50C5\u672C\u6A5F\u5132\u5B58"
-  )), /* @__PURE__ */ React.createElement("div", { className: "px-4 pb-3 flex-1 min-h-0 flex flex-col" }, tab === "overview" && /* @__PURE__ */ React.createElement(Overview, { materials, recipes, recipeCost }), tab === "materials" && /* @__PURE__ */ React.createElement(Materials, { materials, setMaterials }), tab === "recipes" && /* @__PURE__ */ React.createElement(Recipes, { materials, recipes, setRecipes, recipeCost })), /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, { flip: true }))), /* @__PURE__ */ React.createElement("nav", { className: "mt-3 shrink-0 bg-teal-800 rounded-lg shadow-lg flex overflow-hidden" }, tabs.map((t) => {
-    const TabIcon = t.icon;
-    const active = tab === t.id;
-    return /* @__PURE__ */ React.createElement("button", { key: t.id, onClick: () => setTab(t.id), className: `flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${active ? "bg-teal-900 text-amber-300" : "text-teal-100"}` }, /* @__PURE__ */ React.createElement(TabIcon, { size: 18, strokeWidth: active ? 2.4 : 1.8 }), t.label);
-  }))), syncModalOpen && /* @__PURE__ */ React.createElement(SyncModal, { onClose: () => setSyncModalOpen(false), syncCode, setSyncCode, dbReady }));
+    /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-md flex flex-col min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 rounded-t-sm shadow-lg overflow-hidden flex flex-col flex-1 min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, null)), /* @__PURE__ */ React.createElement("header", { className: "px-5 pt-1 pb-4 text-center shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs tracking-widest text-stone-500 font-mono mt-2" }, "MATERIAL COST LEDGER"), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-black text-stone-800 tracking-tight mt-1" }, "\u7269\u6599\u6210\u672C"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1 font-mono" }, "\u54C1\u9805 ", materials.length, " \xB7 \u52A0\u6599 ", toppings.length, " \xB7 \u914D\u65B9 ", recipes.length), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => setSyncModalOpen(true),
+        className: `mt-2 inline-flex items-center gap-1 text-xs rounded-full px-3 py-1 border ${syncCode && dbReady ? "text-teal-700 border-teal-200 hover:bg-teal-50" : syncCode && !dbReady ? "text-amber-700 border-amber-300 hover:bg-amber-50" : "text-stone-500 border-stone-300 hover:bg-stone-100"}`
+      },
+      /* @__PURE__ */ React.createElement(Cloud, { size: 12 }),
+      syncCode ? dbReady ? `\u5DF2\u540C\u6B65\uFF1A${syncCode}` : "\u4EE3\u78BC\u5DF2\u8A2D\u5B9A\uFF0C\u5F85\u9023\u63A5 Firebase" : "\u50C5\u672C\u6A5F\u5132\u5B58"
+    )), /* @__PURE__ */ React.createElement("div", { className: "px-4 pb-3 flex-1 min-h-0 flex flex-col" }, tab === "overview" && /* @__PURE__ */ React.createElement(Overview, { materials, toppings, recipes, recipeCost }), tab === "materials" && /* @__PURE__ */ React.createElement(Materials, { materials, setMaterials }), tab === "toppings" && /* @__PURE__ */ React.createElement(Toppings, { materials, toppings, setToppings }), tab === "recipes" && /* @__PURE__ */ React.createElement(
+      Recipes,
+      {
+        materials,
+        toppings,
+        recipes,
+        setRecipes,
+        recipeCost
+      }
+    )), /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, { flip: true }))), /* @__PURE__ */ React.createElement("nav", { className: "mt-3 shrink-0 bg-teal-800 rounded-lg shadow-lg flex overflow-hidden" }, tabs.map((t) => {
+      const Icon = t.icon;
+      const active = tab === t.id;
+      return /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          key: t.id,
+          onClick: () => setTab(t.id),
+          className: `flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${active ? "bg-teal-900 text-amber-300" : "text-teal-100"}`
+        },
+        /* @__PURE__ */ React.createElement(Icon, { size: 18, strokeWidth: active ? 2.4 : 1.8 }),
+        t.label
+      );
+    }))),
+    syncModalOpen && /* @__PURE__ */ React.createElement(SyncModal, { onClose: () => setSyncModalOpen(false), syncCode, setSyncCode, dbReady })
+  );
 }
 function SyncModal({ onClose, syncCode, setSyncCode, dbReady: dbReady2 }) {
   const [input, setInput] = useState(syncCode);
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: "\u96F2\u7AEF\u540C\u6B65\u8A2D\u5B9A" }, !dbReady2 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 mb-3 text-xs text-amber-800 leading-relaxed" }, "\u9084\u6C92\u6709\u8A2D\u5B9A Firebase\u3002\u8ACB\u5728\u6A94\u6848\u6700\u4E0A\u9762\u627E\u5230 firebaseConfig\uFF0C\u8CBC\u4E0A\u4F60\u7684\u8A2D\u5B9A\u503C\uFF0C\u624D\u80FD\u771F\u6B63\u9023\u4E0A\u96F2\u7AEF\u3002\u76EE\u524D\u53EA\u6703\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mb-3 leading-relaxed" }, "\u8F38\u5165\u4E00\u7D44\u4EE3\u78BC\uFF0C\u5728\u5176\u4ED6\u88DD\u7F6E\u6253\u958B\u9019\u500B\u7DB2\u5740\u3001\u8F38\u5165\u540C\u4E00\u7D44\u4EE3\u78BC\uFF0C\u7269\u6599\u548C\u914D\u65B9\u8CC7\u6599\u5C31\u6703\u540C\u6B65\u3002\u4EE3\u78BC\u81EA\u5DF1\u53D6\uFF0C\u4F8B\u5982\u5E97\u540D\u7684\u82F1\u6578\u5B57\u7D44\u5408\u3002\u7559\u7A7A\u8868\u793A\u53EA\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement(Field, { label: "\u540C\u6B65\u4EE3\u78BC" }, /* @__PURE__ */ React.createElement("input", { value: input, onChange: (e) => setInput(e.target.value), placeholder: "\u4F8B\u5982\uFF1AtaoyuanTL01", className: "input" })), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: "\u96F2\u7AEF\u540C\u6B65\u8A2D\u5B9A" }, !dbReady2 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 mb-3 text-xs text-amber-800 leading-relaxed" }, "\u9084\u6C92\u6709\u8A2D\u5B9A Firebase\u3002\u8ACB\u5728\u6A94\u6848\u6700\u4E0A\u9762\u627E\u5230 firebaseConfig\uFF0C\u8CBC\u4E0A\u4F60\u7684\u8A2D\u5B9A\u503C\uFF0C\u624D\u80FD\u771F\u6B63\u9023\u4E0A\u96F2\u7AEF\u3002\u76EE\u524D\u53EA\u6703\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mb-3 leading-relaxed" }, "\u8F38\u5165\u4E00\u7D44\u4EE3\u78BC\uFF0C\u5728\u5176\u4ED6\u88DD\u7F6E\u6253\u958B\u9019\u500B\u7DB2\u5740\u3001\u8F38\u5165\u540C\u4E00\u7D44\u4EE3\u78BC\uFF0C\u7269\u6599\u3001\u52A0\u6599\u548C\u914D\u65B9\u8CC7\u6599\u5C31\u6703\u540C\u6B65\u3002\u4EE3\u78BC\u81EA\u5DF1\u53D6\uFF0C\u4F8B\u5982\u5E97\u540D\u7684\u82F1\u6578\u5B57\u7D44\u5408\u3002\u7559\u7A7A\u8868\u793A\u53EA\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement(Field, { label: "\u540C\u6B65\u4EE3\u78BC" }, /* @__PURE__ */ React.createElement("input", { value: input, onChange: (e) => setInput(e.target.value), placeholder: "\u4F8B\u5982\uFF1AtaoyuanTL01", className: "input" })), /* @__PURE__ */ React.createElement("button", { onClick: () => {
     setSyncCode(input.trim());
     onClose();
   }, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " ", input.trim() ? "\u9023\u63A5\u540C\u6B65" : "\u6539\u70BA\u50C5\u672C\u6A5F\u5132\u5B58"));
 }
-function Overview({ materials, recipes, recipeCost }) {
+function Overview({ materials, toppings, recipes, recipeCost }) {
   const rows = recipes.map((r) => {
     const cost = recipeCost(r);
     const margin = r.sellPrice - cost;
@@ -255,10 +418,25 @@ function Overview({ materials, recipes, recipeCost }) {
   }).sort((a, b) => a.rate - b.rate);
   const avgRate = rows.length > 0 ? rows.reduce((s, r) => s + r.rate, 0) / rows.length : 0;
   const lowMargin = rows.filter((r) => r.rate < 40);
-  return /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3 shrink-0 mb-4" }, /* @__PURE__ */ React.createElement(StatCard, { label: "\u7269\u6599\u54C1\u9805", value: materials.length, unit: "\u9805" }), /* @__PURE__ */ React.createElement(StatCard, { label: "\u5E73\u5747\u6BDB\u5229\u7387", value: avgRate.toFixed(1), unit: "%", accent: true })), lowMargin.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 flex gap-2 items-start shrink-0 mb-4" }, /* @__PURE__ */ React.createElement(AlertTriangle, { size: 16, className: "text-amber-600 mt-0.5 shrink-0" }), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-amber-800 leading-relaxed" }, lowMargin.map((r) => r.name).join("\u3001"), " \u6BDB\u5229\u7387\u4F4E\u65BC 40%\uFF0C\u5EFA\u8B70\u6AA2\u8996\u552E\u50F9\u6216\u914D\u65B9\u7528\u6599\u3002")), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs font-mono text-stone-500 mb-2 tracking-wide shrink-0" }, "\u98F2\u54C1\u6BDB\u5229\u6392\u884C\uFF08\u4F4E\u5230\u9AD8\uFF09"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-300 flex-1 min-h-0 overflow-y-auto" }, rows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "px-3 py-2.5 flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate" }, r.name), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono" }, "\u6210\u672C ", /* @__PURE__ */ React.createElement(Money, { value: r.cost }), " \xB7 \u552E\u50F9 ", /* @__PURE__ */ React.createElement(Money, { value: r.sellPrice }))), /* @__PURE__ */ React.createElement("div", { className: `flex items-center gap-1 font-mono text-sm shrink-0 ml-2 ${r.rate < 40 ? "text-rose-600" : "text-teal-700"}` }, r.rate < 40 ? /* @__PURE__ */ React.createElement(TrendingDown, { size: 14 }) : /* @__PURE__ */ React.createElement(TrendingUp, { size: 14 }), r.rate.toFixed(1), "%"))), rows.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u5230\u300C\u914D\u65B9\u6210\u672C\u300D\u5206\u9801\u65B0\u589E\u7B2C\u4E00\u500B\u98F2\u54C1\u914D\u65B9\u5427"))));
+  return /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3 shrink-0 mb-4" }, /* @__PURE__ */ React.createElement(StatCard, { label: "\u7269\u6599\u54C1\u9805", value: materials.length, unit: "\u9805" }), /* @__PURE__ */ React.createElement(StatCard, { label: "\u5E73\u5747\u6BDB\u5229\u7387", value: avgRate.toFixed(1), unit: "%", accent: true })), lowMargin.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 flex gap-2 items-start shrink-0 mb-4" }, /* @__PURE__ */ React.createElement(AlertTriangle, { size: 16, className: "text-amber-600 mt-0.5 shrink-0" }), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-amber-800 leading-relaxed" }, lowMargin.map((r) => r.name).join("\u3001"), " \u6BDB\u5229\u7387\u4F4E\u65BC 40%\uFF0C\u5EFA\u8B70\u6AA2\u8996\u552E\u50F9\u6216\u914D\u65B9\u7528\u6599\u3002")), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs font-mono text-stone-500 mb-2 tracking-wide shrink-0" }, "\u98F2\u54C1\u6BDB\u5229\u6392\u884C\uFF08\u4F4E\u5230\u9AD8\uFF09"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-300 flex-1 min-h-0 overflow-y-auto" }, rows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "px-3 py-2.5 flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate" }, r.name), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono" }, "\u6210\u672C ", /* @__PURE__ */ React.createElement(Money, { value: r.cost }), " \xB7 \u552E\u50F9 ", /* @__PURE__ */ React.createElement(Money, { value: r.sellPrice }))), /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      className: `flex items-center gap-1 font-mono text-sm shrink-0 ml-2 ${r.rate < 40 ? "text-rose-600" : "text-teal-700"}`
+    },
+    r.rate < 40 ? /* @__PURE__ */ React.createElement(TrendingDown, { size: 14 }) : /* @__PURE__ */ React.createElement(TrendingUp, { size: 14 }),
+    r.rate.toFixed(1),
+    "%"
+  ))), rows.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u5230\u300C\u914D\u65B9\u6210\u672C\u300D\u5206\u9801\u65B0\u589E\u7B2C\u4E00\u500B\u98F2\u54C1\u914D\u65B9\u5427"))));
 }
 function StatCard({ label, value, unit, accent }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-3 py-3 text-center" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono" }, label), /* @__PURE__ */ React.createElement("p", { className: `text-2xl font-black font-mono mt-0.5 ${accent ? "text-teal-700" : "text-stone-800"}` }, value, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-normal ml-0.5" }, unit)));
+  return /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-3 py-3 text-center" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono" }, label), /* @__PURE__ */ React.createElement(
+    "p",
+    {
+      className: `text-2xl font-black font-mono mt-0.5 ${accent ? "text-teal-700" : "text-stone-800"}`
+    },
+    value,
+    /* @__PURE__ */ React.createElement("span", { className: "text-xs font-normal ml-0.5" }, unit)
+  ));
 }
 function Materials({ materials, setMaterials }) {
   const [editing, setEditing] = useState(null);
@@ -490,7 +668,186 @@ function MaterialDetailModal({ material, onClose, onEdit }) {
   const totalQty = (material.packCount || 1) * (material.packSize || 0);
   return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599"));
 }
-function Recipes({ materials, recipes, setRecipes, recipeCost }) {
+function Toppings({ materials, toppings, setToppings }) {
+  const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
+  const [search, setSearch] = useState("");
+  const emptyForm = { name: "", yieldQty: "", yieldUnit: "\u514B", ingredients: [] };
+  const [form, setForm] = useState(emptyForm);
+  const filteredToppings = toppings.filter(
+    (t) => t.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
+  const openNew = () => {
+    setForm(emptyForm);
+    setEditing("new");
+  };
+  const openEdit = (t) => {
+    setForm({
+      name: t.name,
+      yieldQty: String(t.yieldQty),
+      yieldUnit: t.yieldUnit,
+      ingredients: t.ingredients.map((i) => ({ ...i }))
+    });
+    setEditing(t.id);
+  };
+  const addIngredient = () => {
+    if (materials.length === 0) return;
+    setForm((f) => ({ ...f, ingredients: [...f.ingredients, { materialId: materials[0].id, qty: "" }] }));
+  };
+  const updateIngredient = (idx, patch) => {
+    setForm((f) => ({ ...f, ingredients: f.ingredients.map((ing, i) => i === idx ? { ...ing, ...patch } : ing) }));
+  };
+  const removeIngredient = (idx) => {
+    setForm((f) => ({ ...f, ingredients: f.ingredients.filter((_, i) => i !== idx) }));
+  };
+  const draftTotalCost = form.ingredients.reduce((sum, ing) => {
+    const m = materials.find((x) => x.id === ing.materialId);
+    const eff = getEffective(m);
+    return sum + (ing.qty ? Number(ing.qty) * eff.cost : 0);
+  }, 0);
+  const draftYieldQty = Number(form.yieldQty) || 0;
+  const draftUnitCost = draftYieldQty > 0 ? draftTotalCost / draftYieldQty : 0;
+  const save = () => {
+    if (!form.name.trim() || form.ingredients.length === 0 || !draftYieldQty) return;
+    const cleanIngredients = form.ingredients.filter((i) => i.qty !== "" && !isNaN(Number(i.qty))).map((i) => ({ materialId: i.materialId, qty: Number(i.qty) }));
+    const data = { name: form.name.trim(), yieldQty: draftYieldQty, yieldUnit: form.yieldUnit, ingredients: cleanIngredients };
+    if (editing === "new") setToppings((prev) => [...prev, { id: uid(), ...data }]);
+    else setToppings((prev) => prev.map((t) => t.id === editing ? { ...t, ...data } : t));
+    setEditing(null);
+  };
+  const remove = (id) => setToppings((prev) => prev.filter((t) => t.id !== id));
+  return /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-2 shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs font-mono text-stone-500 tracking-wide" }, "\u52A0\u6599\u6E05\u55AE \xB7 \u534A\u6210\u54C1\u6210\u672C"), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: openNew,
+      disabled: materials.length === 0,
+      className: "flex items-center gap-1 text-xs font-medium text-teal-700 px-2 py-1 rounded hover:bg-emerald-50 disabled:opacity-40"
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 14 }),
+    " \u65B0\u589E\u52A0\u6599"
+  )), /* @__PURE__ */ React.createElement("div", { className: "relative mb-2 shrink-0" }, /* @__PURE__ */ React.createElement(Search, { size: 14, className: "absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" }), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: search,
+      onChange: (e) => setSearch(e.target.value),
+      placeholder: "\u641C\u5C0B\u52A0\u6599\u540D\u7A31",
+      className: "w-full bg-white border border-stone-300 rounded-md pl-8 pr-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-700"
+    }
+  )), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-300 flex-1 min-h-0 overflow-y-auto" }, filteredToppings.map((t) => {
+    const tc = getToppingCost(t, materials);
+    return /* @__PURE__ */ React.createElement(
+      "div",
+      {
+        key: t.id,
+        onClick: () => setViewing(t.id),
+        className: "px-3 py-2.5 flex items-center justify-between text-sm gap-2 cursor-pointer hover:bg-stone-50 active:bg-stone-100"
+      },
+      /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate" }, t.name), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono truncate" }, "\u5171", t.ingredients.length, "\u9805\u7269\u6599 \xB7 \u505A\u51FA", t.yieldQty, t.yieldUnit)),
+      /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 shrink-0" }, /* @__PURE__ */ React.createElement("span", { className: "font-mono text-sm text-teal-700 font-semibold" }, "$", unitMoney(tc.unitCost), "/", t.yieldUnit), /* @__PURE__ */ React.createElement(ChevronRight, { size: 16, className: "text-stone-300" }))
+    );
+  }), toppings.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6 px-4 leading-relaxed" }, "\u5C1A\u672A\u65B0\u589E\u4EFB\u4F55\u52A0\u6599\u3002\u52A0\u6599\u662F\u7528\u7269\u6599\u7D44\u5408\u88FD\u4F5C\u51FA\u4F86\u3001\u53EF\u4EE5\u518D\u653E\u9032\u914D\u65B9\u88E1\u7684\u534A\u6210\u54C1\uFF0C\u4F8B\u5982\u6885\u5B50\u51CD\u3001\u4ED9\u8349\u51CD\u3002"), toppings.length > 0 && filteredToppings.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u52A0\u6599")), viewing && (() => {
+    const t = toppings.find((x) => x.id === viewing);
+    if (!t) return null;
+    return /* @__PURE__ */ React.createElement(
+      ToppingDetailModal,
+      {
+        topping: t,
+        materials,
+        onClose: () => setViewing(null),
+        onEdit: () => {
+          setViewing(null);
+          openEdit(t);
+        }
+      }
+    );
+  })(), editing && /* @__PURE__ */ React.createElement(
+    Modal,
+    {
+      onClose: () => setEditing(null),
+      title: editing === "new" ? "\u65B0\u589E\u52A0\u6599" : "\u7DE8\u8F2F\u52A0\u6599",
+      onDelete: editing !== "new" ? () => {
+        remove(editing);
+        setEditing(null);
+      } : void 0,
+      deleteLabel: form.name
+    },
+    /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mb-3 leading-relaxed" }, "\u52A0\u6599\u662F\u7528\u7269\u6599\u7D44\u5408\u88FD\u4F5C\u51FA\u4F86\u7684\u534A\u6210\u54C1\uFF08\u4F8B\u5982\u51CD\u7C89\uFF0B\u6885\u5B50\u6C41\u505A\u6210\u6885\u5B50\u51CD\uFF09\uFF0C\u505A\u597D\u5F8C\u53EF\u4EE5\u5728\u300C\u914D\u65B9\u6210\u672C\u300D\u88E1\u7576\u4E00\u9805\u7528\u6599\u52A0\u9032\u98F2\u54C1\u3002"),
+    /* @__PURE__ */ React.createElement(Field, { label: "\u52A0\u6599\u540D\u7A31" }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        value: form.name,
+        onChange: (e) => setForm({ ...form, name: e.target.value }),
+        placeholder: "\u4F8B\u5982\uFF1A\u6885\u5B50\u51CD",
+        className: "input"
+      }
+    )),
+    /* @__PURE__ */ React.createElement("div", { className: "mt-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, "\u7528\u6599\u660E\u7D30"), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: addIngredient,
+        disabled: materials.length === 0,
+        className: "text-xs text-teal-700 font-medium flex items-center gap-1 disabled:opacity-40"
+      },
+      /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
+      " \u52A0\u5165\u7269\u6599"
+    )), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, form.ingredients.map((ing, idx) => {
+      const m = materials.find((x) => x.id === ing.materialId);
+      const eff = getEffective(m);
+      const lineCost = ing.qty ? Number(ing.qty) * eff.cost : 0;
+      return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(
+        "select",
+        {
+          value: ing.materialId,
+          onChange: (e) => updateIngredient(idx, { materialId: e.target.value }),
+          className: "input flex-1"
+        },
+        materials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: mm.id, value: mm.id }, mm.name))
+      ), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1 shrink-0" }, /* @__PURE__ */ React.createElement(
+        "input",
+        {
+          type: "number",
+          inputMode: "decimal",
+          value: ing.qty,
+          onChange: (e) => updateIngredient(idx, { qty: e.target.value }),
+          placeholder: "\u7528\u91CF",
+          className: "input w-16"
+        }
+      ), /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-400 w-7" }, eff.unit)), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-xs text-stone-500 w-14 text-right shrink-0" }, ing.qty ? `$${money(lineCost)}` : "\u2014"), /* @__PURE__ */ React.createElement("button", { onClick: () => removeIngredient(idx), className: "p-1.5 text-stone-400 hover:text-rose-600 shrink-0" }, /* @__PURE__ */ React.createElement(X, { size: 15 })));
+    }), form.ingredients.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400" }, "\u5C1A\u672A\u52A0\u5165\u7269\u6599"))),
+    /* @__PURE__ */ React.createElement(Dashed, null),
+    /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3" }, /* @__PURE__ */ React.createElement(Field, { label: "\u9019\u6279\u505A\u51FA\u591A\u5C11" }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "number",
+        inputMode: "decimal",
+        value: form.yieldQty,
+        onChange: (e) => setForm({ ...form, yieldQty: e.target.value }),
+        placeholder: "\u4F8B\u5982\uFF1A1000",
+        className: "input"
+      }
+    )), /* @__PURE__ */ React.createElement(Field, { label: "\u7522\u51FA\u55AE\u4F4D" }, /* @__PURE__ */ React.createElement(
+      "select",
+      {
+        value: form.yieldUnit,
+        onChange: (e) => setForm({ ...form, yieldUnit: e.target.value }),
+        className: "input"
+      },
+      UNIT_OPTIONS.map((u) => /* @__PURE__ */ React.createElement("option", { key: u, value: u }, u))
+    ))),
+    draftYieldQty > 0 && /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 flex items-center justify-between mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-emerald-800 font-medium" }, "\u6BCF", form.yieldUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(draftUnitCost))),
+    /* @__PURE__ */ React.createElement("button", { onClick: save, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " \u5132\u5B58")
+  ));
+}
+function ToppingDetailModal({ topping, materials, onClose, onEdit }) {
+  const tc = getToppingCost(topping, materials);
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: topping.name }, /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5 mb-3" }, topping.ingredients.map((ing, idx) => {
+    const m = materials.find((x) => x.id === ing.materialId);
+    const eff = getEffective(m);
+    const lineCost = ing.qty * eff.cost;
+    return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center justify-between text-sm bg-white border border-stone-200 rounded-md px-3 py-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-700 truncate" }, m ? m.name : "\uFF08\u7269\u6599\u5DF2\u522A\u9664\uFF09", " \xB7 ", ing.qty, eff.unit), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, "$", money(lineCost)));
+  })), /* @__PURE__ */ React.createElement(Dashed, null), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u7E3D\u6210\u672C"), /* @__PURE__ */ React.createElement(Money, { value: tc.totalCost, className: "text-stone-800 font-semibold" })), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u505A\u51FA"), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800" }, topping.yieldQty, topping.yieldUnit)), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 flex items-center justify-between mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-emerald-800 font-medium" }, "\u6BCF", topping.yieldUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(tc.unitCost))), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u52A0\u6599"));
+}
+function Recipes({ materials, toppings, recipes, setRecipes, recipeCost }) {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [search, setSearch] = useState("");
@@ -507,11 +864,9 @@ function Recipes({ materials, recipes, setRecipes, recipeCost }) {
     setEditing(r.id);
   };
   const addIngredient = () => {
-    if (materials.length === 0) return;
-    setForm((f) => ({
-      ...f,
-      ingredients: [...f.ingredients, { materialId: materials[0].id, qty: "" }]
-    }));
+    if (materials.length === 0 && toppings.length === 0) return;
+    const first = materials.length > 0 ? { materialId: materials[0].id, kind: "material" } : { materialId: toppings[0].id, kind: "topping" };
+    setForm((f) => ({ ...f, ingredients: [...f.ingredients, { ...first, qty: "" }] }));
   };
   const updateIngredient = (idx, patch) => {
     setForm((f) => ({
@@ -523,13 +878,12 @@ function Recipes({ materials, recipes, setRecipes, recipeCost }) {
     setForm((f) => ({ ...f, ingredients: f.ingredients.filter((_, i) => i !== idx) }));
   };
   const draftCost = form.ingredients.reduce((sum, ing) => {
-    const m = materials.find((x) => x.id === ing.materialId);
-    const eff = getEffective(m);
-    return sum + (ing.qty ? Number(ing.qty) * eff.cost : 0);
+    const info = getIngredientInfo(ing, materials, toppings);
+    return sum + (ing.qty ? Number(ing.qty) * info.cost : 0);
   }, 0);
   const save = () => {
     if (!form.name.trim() || form.ingredients.length === 0) return;
-    const cleanIngredients = form.ingredients.filter((i) => i.qty !== "" && !isNaN(Number(i.qty))).map((i) => ({ materialId: i.materialId, qty: Number(i.qty) }));
+    const cleanIngredients = form.ingredients.filter((i) => i.qty !== "" && !isNaN(Number(i.qty))).map((i) => ({ materialId: i.materialId, qty: Number(i.qty), kind: i.kind || "material" }));
     if (editing === "new") {
       setRecipes((prev) => [
         ...prev,
@@ -584,6 +938,7 @@ function Recipes({ materials, recipes, setRecipes, recipeCost }) {
       {
         recipe: r,
         materials,
+        toppings,
         recipeCost,
         onClose: () => setViewing(null),
         onEdit: () => {
@@ -623,27 +978,30 @@ function Recipes({ materials, recipes, setRecipes, recipeCost }) {
         className: "input"
       }
     )),
-    /* @__PURE__ */ React.createElement("div", { className: "mt-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, "\u7528\u6599\u660E\u7D30"), /* @__PURE__ */ React.createElement(
+    /* @__PURE__ */ React.createElement("div", { className: "mt-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, "\u7528\u6599\u660E\u7D30\uFF08\u7269\u6599\u6216\u52A0\u6599\u90FD\u53EF\u4EE5\u9078\uFF09"), /* @__PURE__ */ React.createElement(
       "button",
       {
         onClick: addIngredient,
-        disabled: materials.length === 0,
+        disabled: materials.length === 0 && toppings.length === 0,
         className: "text-xs text-teal-700 font-medium flex items-center gap-1 disabled:opacity-40"
       },
       /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
-      " \u52A0\u5165\u7269\u6599"
+      " \u52A0\u5165\u7528\u6599"
     )), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, form.ingredients.map((ing, idx) => {
-      const m = materials.find((x) => x.id === ing.materialId);
-      const eff = getEffective(m);
-      const lineCost = ing.qty ? Number(ing.qty) * eff.cost : 0;
+      const info = getIngredientInfo(ing, materials, toppings);
+      const lineCost = ing.qty ? Number(ing.qty) * info.cost : 0;
       return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(
         "select",
         {
-          value: ing.materialId,
-          onChange: (e) => updateIngredient(idx, { materialId: e.target.value }),
+          value: `${ing.kind || "material"}:${ing.materialId}`,
+          onChange: (e) => {
+            const [kind, refId] = e.target.value.split(":");
+            updateIngredient(idx, { kind, materialId: refId });
+          },
           className: "input flex-1"
         },
-        materials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: mm.id, value: mm.id }, mm.name))
+        /* @__PURE__ */ React.createElement("optgroup", { label: "\u7269\u6599" }, materials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: `material:${mm.id}`, value: `material:${mm.id}` }, mm.name))),
+        toppings.length > 0 && /* @__PURE__ */ React.createElement("optgroup", { label: "\u52A0\u6599" }, toppings.map((tt) => /* @__PURE__ */ React.createElement("option", { key: `topping:${tt.id}`, value: `topping:${tt.id}` }, tt.name)))
       ), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1 shrink-0" }, /* @__PURE__ */ React.createElement(
         "input",
         {
@@ -654,38 +1012,84 @@ function Recipes({ materials, recipes, setRecipes, recipeCost }) {
           placeholder: "\u7528\u91CF",
           className: "input w-16"
         }
-      ), /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-400 w-7" }, eff.unit)), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-xs text-stone-500 w-14 text-right shrink-0" }, ing.qty ? `$${money(lineCost)}` : "\u2014"), /* @__PURE__ */ React.createElement("button", { onClick: () => removeIngredient(idx), className: "p-1.5 text-stone-400 hover:text-rose-600 shrink-0" }, /* @__PURE__ */ React.createElement(X, { size: 15 })));
-    }), form.ingredients.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400" }, "\u5C1A\u672A\u52A0\u5165\u7269\u6599"))),
+      ), /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-400 w-7" }, info.unit)), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-xs text-stone-500 w-14 text-right shrink-0" }, ing.qty ? `$${money(lineCost)}` : "\u2014"), /* @__PURE__ */ React.createElement("button", { onClick: () => removeIngredient(idx), className: "p-1.5 text-stone-400 hover:text-rose-600 shrink-0" }, /* @__PURE__ */ React.createElement(X, { size: 15 })));
+    }), form.ingredients.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400" }, "\u5C1A\u672A\u52A0\u5165\u7528\u6599"))),
     /* @__PURE__ */ React.createElement(Dashed, null),
     /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u9810\u4F30\u6210\u672C"), /* @__PURE__ */ React.createElement(Money, { value: draftCost, className: "text-stone-800 font-semibold" })),
     form.sellPrice ? /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u9810\u4F30\u6BDB\u5229\u7387"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, ((Number(form.sellPrice) - draftCost) / Number(form.sellPrice) * 100).toFixed(1), "%")) : null,
     /* @__PURE__ */ React.createElement("button", { onClick: save, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " \u5132\u5B58")
   ));
 }
-function RecipeDetailModal({ recipe, materials, recipeCost, onClose, onEdit }) {
+function RecipeDetailModal({ recipe, materials, toppings, recipeCost, onClose, onEdit }) {
   const cost = recipeCost(recipe);
   const margin = recipe.sellPrice - cost;
   const rate = recipe.sellPrice ? margin / recipe.sellPrice * 100 : 0;
   return /* @__PURE__ */ React.createElement(Modal, { onClose, title: recipe.name }, /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5 mb-3" }, recipe.ingredients.map((ing, idx) => {
-    const m = materials.find((x) => x.id === ing.materialId);
-    const eff = getEffective(m);
-    const lineCost = ing.qty * eff.cost;
-    return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center justify-between text-sm bg-white border border-stone-200 rounded-md px-3 py-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-700 truncate" }, m ? m.name : "\uFF08\u7269\u6599\u5DF2\u522A\u9664\uFF09", " \xB7 ", ing.qty, eff.unit), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, "$", money(lineCost)));
+    const info = getIngredientInfo(ing, materials, toppings);
+    const lineCost = ing.qty * info.cost;
+    return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center justify-between text-sm bg-white border border-stone-200 rounded-md px-3 py-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-700 truncate" }, info.name, " \xB7 ", ing.qty, info.unit, ing.kind === "topping" && /* @__PURE__ */ React.createElement("span", { className: "text-teal-600" }, " \xB7\u52A0\u6599")), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, "$", money(lineCost)));
   })), /* @__PURE__ */ React.createElement(Dashed, null), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u7E3D\u6210\u672C"), /* @__PURE__ */ React.createElement(Money, { value: cost, className: "text-stone-800 font-semibold" })), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u552E\u50F9"), /* @__PURE__ */ React.createElement(Money, { value: recipe.sellPrice, className: "text-stone-800 font-semibold" })), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u6BDB\u5229\u7387"), /* @__PURE__ */ React.createElement("span", { className: `font-mono font-semibold ${rate < 40 ? "text-rose-600" : "text-teal-700"}` }, rate.toFixed(1), "%")), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u914D\u65B9"));
 }
 function Field({ label, children }) {
   return /* @__PURE__ */ React.createElement("label", { className: "block mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "block text-xs text-stone-500 mb-1" }, label), children);
 }
 function Modal({ title, onClose, onDelete, deleteLabel, children }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4", style: { backgroundColor: "rgba(0,0,0,0.4)" } }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 w-full sm:max-w-sm sm:rounded-md rounded-t-xl overflow-y-auto", style: { maxHeight: "85vh" } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between px-4 py-3 border-b border-dashed border-stone-300 sticky top-0 bg-stone-50" }, /* @__PURE__ */ React.createElement("h2", { className: "font-semibold text-stone-800 text-sm" }, title), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1" }, onDelete && /* @__PURE__ */ React.createElement("button", { onClick: () => {
-    if (window.confirm(`\u78BA\u5B9A\u8981\u522A\u9664\u300C${deleteLabel || "\u9019\u4E00\u9805"}\u300D\u55CE\uFF1F\u6B64\u52D5\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002`)) {
-      onDelete();
-    }
-  }, className: "p-1 text-stone-400 hover:text-rose-600" }, /* @__PURE__ */ React.createElement(Trash2, { size: 17 })), /* @__PURE__ */ React.createElement("button", { onClick: onClose, className: "p-1 text-stone-400 hover:text-stone-700" }, /* @__PURE__ */ React.createElement(X, { size: 18 })))), /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4" }, children)), /* @__PURE__ */ React.createElement("style", null, `
-        .input { width: 100%; background: white; border: 1px solid #D6D3D1; border-radius: 6px; padding: 8px 10px; font-size: 14px; color: #292524; }
-        .input:focus { outline: 2px solid #0F766E; outline-offset: 1px; }
-        .save-btn { width: 100%; margin-top: 8px; background: #0F766E; color: white; font-weight: 600; font-size: 14px; border-radius: 6px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-      `));
+  return /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      className: "fixed inset-0 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4",
+      style: { backgroundColor: "rgba(0,0,0,0.4)" }
+    },
+    /* @__PURE__ */ React.createElement(
+      "div",
+      {
+        className: "bg-stone-50 w-full sm:max-w-sm sm:rounded-md rounded-t-xl overflow-y-auto",
+        style: { maxHeight: "85vh" }
+      },
+      /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between px-4 py-3 border-b border-dashed border-stone-300 sticky top-0 bg-stone-50" }, /* @__PURE__ */ React.createElement("h2", { className: "font-semibold text-stone-800 text-sm" }, title), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1" }, onDelete && /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          onClick: () => {
+            if (window.confirm(`\u78BA\u5B9A\u8981\u522A\u9664\u300C${deleteLabel || "\u9019\u4E00\u9805"}\u300D\u55CE\uFF1F\u6B64\u52D5\u4F5C\u7121\u6CD5\u5FA9\u539F\u3002`)) {
+              onDelete();
+            }
+          },
+          className: "p-1 text-stone-400 hover:text-rose-600"
+        },
+        /* @__PURE__ */ React.createElement(Trash2, { size: 17 })
+      ), /* @__PURE__ */ React.createElement("button", { onClick: onClose, className: "p-1 text-stone-400 hover:text-stone-700" }, /* @__PURE__ */ React.createElement(X, { size: 18 })))),
+      /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4" }, children)
+    ),
+    /* @__PURE__ */ React.createElement("style", null, `
+        .input {
+          width: 100%;
+          background: white;
+          border: 1px solid #D6D3D1;
+          border-radius: 6px;
+          padding: 8px 10px;
+          font-size: 14px;
+          color: #292524;
+        }
+        .input:focus {
+          outline: 2px solid #0F766E;
+          outline-offset: 1px;
+        }
+        .save-btn {
+          width: 100%;
+          margin-top: 8px;
+          background: #0F766E;
+          color: white;
+          font-weight: 600;
+          font-size: 14px;
+          border-radius: 6px;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+      `)
+  );
 }
 try {
   ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(CostTracker, null));
