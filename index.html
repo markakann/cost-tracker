@@ -231,6 +231,13 @@ const unitMoney = (n) => {
   const truncatedTo5 = Math.floor(roundedTo6 * 1e5) / 1e5;
   return truncatedTo5.toLocaleString("zh-TW", { maximumFractionDigits: 5 });
 };
+let pinyinCollator;
+try {
+  pinyinCollator = new Intl.Collator("zh-u-co-pinyin");
+} catch (e) {
+  pinyinCollator = { compare: (a, b) => (a || "").localeCompare(b || "") };
+}
+const sortByName = (arr) => [...arr].sort((a, b) => pinyinCollator.compare(a.name, b.name));
 function getEffective(m) {
   if (!m) return { unit: "", cost: 0, purchaseUnit: "", purchaseCost: 0 };
   const totalQty = (m.packCount || 1) * (m.packSize || 0);
@@ -400,7 +407,7 @@ function CostTracker() {
       className: "h-screen bg-stone-200 flex justify-center px-3 py-6 overflow-hidden",
       style: { height: "100dvh" }
     },
-    /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-md flex flex-col min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 rounded-t-sm shadow-lg overflow-hidden flex flex-col flex-1 min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, null)), /* @__PURE__ */ React.createElement("header", { className: "px-5 pt-1 pb-4 text-center shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs tracking-widest text-stone-500 font-mono mt-2" }, "MATERIAL COST LEDGER"), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-black text-stone-800 tracking-tight mt-1" }, "\u7269\u6599\u6210\u672C"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1 font-mono" }, "\u54C1\u9805 ", materials.length, " \xB7 \u52A0\u6599 ", toppings.length, " \xB7 \u914D\u65B9 ", recipes.length), /* @__PURE__ */ React.createElement(
+    /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-md flex flex-col min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 rounded-t-sm shadow-lg overflow-hidden flex flex-col flex-1 min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, null)), /* @__PURE__ */ React.createElement("header", { className: "px-5 pt-1 pb-4 text-center shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs tracking-widest text-stone-500 font-mono mt-2" }, "MATERIAL COST LEDGER"), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-black text-stone-800 tracking-tight mt-1" }, "\u7269\u6599\u6210\u672C"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1 font-mono" }, "\u54C1\u9805 ", materials.filter((m) => !m.archived).length, " \xB7 \u52A0\u6599 ", toppings.length + materials.filter((m) => m.isTopping && !m.archived).length, " \xB7 \u914D\u65B9 ", recipes.length), /* @__PURE__ */ React.createElement(
       "button",
       {
         onClick: () => setSyncModalOpen(true),
@@ -474,6 +481,7 @@ function Materials({ materials, setMaterials }) {
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
   const [search, setSearch] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
   const emptyForm = {
     name: "",
     purchaseUnit: "\u514B",
@@ -485,10 +493,13 @@ function Materials({ materials, setMaterials }) {
     convOutputQty: "",
     convOutputUnit: "\u6BEB\u5347",
     isTopping: false,
-    usableInRecipe: true
+    usableInRecipe: true,
+    archived: false
   };
   const [form, setForm] = useState(emptyForm);
-  const filteredMaterials = materials.filter(
+  const archivedCount = materials.filter((m) => m.archived).length;
+  const visibleMaterials = sortByName(showArchived ? materials : materials.filter((m) => !m.archived));
+  const filteredMaterials = visibleMaterials.filter(
     (m) => m.name.toLowerCase().includes(search.trim().toLowerCase())
   );
   const openNew = () => {
@@ -507,7 +518,8 @@ function Materials({ materials, setMaterials }) {
       convOutputQty: m.conversion ? String(m.conversion.outputQty) : "",
       convOutputUnit: m.conversion ? m.conversion.outputUnit : "\u6BEB\u5347",
       isTopping: !!m.isTopping,
-      usableInRecipe: m.usableInRecipe !== false
+      usableInRecipe: m.usableInRecipe !== false,
+      archived: !!m.archived
     });
     setEditing(m.id);
   };
@@ -532,7 +544,8 @@ function Materials({ materials, setMaterials }) {
       totalPrice: totalPriceNum,
       conversion,
       isTopping: form.isTopping,
-      usableInRecipe: form.usableInRecipe
+      usableInRecipe: form.usableInRecipe,
+      archived: form.archived
     };
     if (editing === "new") {
       setMaterials((prev) => [...prev, { id: uid(), ...data }]);
@@ -558,7 +571,14 @@ function Materials({ materials, setMaterials }) {
       placeholder: "\u641C\u5C0B\u7269\u6599\u540D\u7A31",
       className: "w-full bg-white border border-stone-300 rounded-md pl-8 pr-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-700"
     }
-  )), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-300 flex-1 min-h-0 overflow-y-auto" }, filteredMaterials.map((m) => {
+  )), archivedCount > 0 && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => setShowArchived((v) => !v),
+      className: "text-xs text-stone-400 hover:text-stone-600 mb-2 shrink-0 self-start underline decoration-dotted"
+    },
+    showArchived ? "\u96B1\u85CF\u5DF2\u5C01\u5B58\u7684\u7269\u6599" : `\u986F\u793A\u5DF2\u5C01\u5B58\u7684\u7269\u6599\uFF08${archivedCount}\uFF09`
+  ), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-300 flex-1 min-h-0 overflow-y-auto" }, filteredMaterials.map((m) => {
     const eff = getEffective(m);
     const parts = [];
     if (m.packCount > 1) parts.push(`\u6BCF\u4EF6 $${money(m.totalPrice / m.packCount)}`);
@@ -570,12 +590,12 @@ function Materials({ materials, setMaterials }) {
       {
         key: m.id,
         onClick: () => setViewing(m.id),
-        className: "px-3 py-2.5 flex items-center justify-between text-sm gap-2 cursor-pointer hover:bg-stone-50 active:bg-stone-100"
+        className: `px-3 py-2.5 flex items-center justify-between text-sm gap-2 cursor-pointer hover:bg-stone-50 active:bg-stone-100 ${m.archived ? "opacity-45" : ""}`
       },
-      /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate flex items-center gap-1" }, m.name, m.isTopping && /* @__PURE__ */ React.createElement(Droplet, { size: 11, className: "text-teal-500 shrink-0" })), detailLine && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono leading-relaxed" }, detailLine)),
+      /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-stone-800 font-medium truncate flex items-center gap-1" }, m.name, m.isTopping && /* @__PURE__ */ React.createElement(Droplet, { size: 11, className: "text-teal-500 shrink-0" }), m.archived && /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-400 border border-stone-300 rounded px-1 shrink-0" }, "\u5DF2\u5C01\u5B58")), detailLine && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 font-mono leading-relaxed" }, detailLine)),
       /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 shrink-0" }, /* @__PURE__ */ React.createElement("span", { className: "font-mono text-sm text-teal-700 font-semibold" }, "$", unitMoney(eff.cost), "/", eff.unit), /* @__PURE__ */ React.createElement(ChevronRight, { size: 16, className: "text-stone-300" }))
     );
-  }), materials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u5C1A\u672A\u65B0\u589E\u4EFB\u4F55\u7269\u6599"), materials.length > 0 && filteredMaterials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u7269\u6599")), viewing && (() => {
+  }), visibleMaterials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, materials.length === 0 ? "\u5C1A\u672A\u65B0\u589E\u4EFB\u4F55\u7269\u6599" : "\u6C92\u6709\u7B26\u5408\u689D\u4EF6\u7684\u7269\u6599"), visibleMaterials.length > 0 && filteredMaterials.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u7269\u6599")), viewing && (() => {
     const m = materials.find((x) => x.id === viewing);
     if (!m) return null;
     return /* @__PURE__ */ React.createElement(
@@ -742,13 +762,36 @@ function Materials({ materials, setMaterials }) {
       )
     ),
     /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-2 mb-3 leading-relaxed" }, "\u958B\u555F\u5F8C\uFF0C\u65B0\u589E\u914D\u65B9\u6642\u7684\u300C\u52A0\u6599\u300D\u9078\u9805\u88E1\u6703\u76F4\u63A5\u770B\u5230\u9019\u9805\u7269\u6599\uFF0C\u4F8B\u5982\u73CD\u73E0\u3001\u6930\u679C\u9019\u7A2E\u8CB7\u73FE\u6210\u7684\u52A0\u6599\u5C31\u9069\u5408\u958B\u9019\u500B\uFF0C\u4E5F\u6703\u4E00\u8D77\u986F\u793A\u5728\u300C\u52A0\u6599\u300D\u5206\u9801\u88E1\uFF08\u4F46\u8981\u7DE8\u8F2F\u9084\u662F\u8981\u56DE\u9019\u88E1\uFF09\u3002"),
+    /* @__PURE__ */ React.createElement(Dashed, null),
+    /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        type: "button",
+        onClick: () => setForm({ ...form, archived: !form.archived }),
+        className: `w-full flex items-center justify-between px-3 py-2.5 rounded-md border mb-2 transition-colors ${form.archived ? "bg-stone-100 border-stone-400" : "bg-white border-stone-300"}`
+      },
+      /* @__PURE__ */ React.createElement("span", { className: "text-sm text-stone-700" }, "\u5C01\u5B58\u9019\u9805\u7269\u6599\uFF08\u96B1\u85CF\uFF0C\u4F46\u4FDD\u7559\u8CC7\u6599\uFF09"),
+      /* @__PURE__ */ React.createElement(
+        "span",
+        {
+          className: `w-9 h-5 rounded-full relative shrink-0 transition-colors ${form.archived ? "bg-stone-500" : "bg-stone-300"}`
+        },
+        /* @__PURE__ */ React.createElement(
+          "span",
+          {
+            className: `absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${form.archived ? "right-0.5" : "left-0.5"}`
+          }
+        )
+      )
+    ),
+    /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 mb-3 leading-relaxed" }, "\u9069\u5408\u4EE5\u524D\u7528\u904E\u3001\u73FE\u5728\u4E0D\u9032\u8CA8\u4E86\u4F46\u60F3\u7559\u7D00\u9304\u7684\u54C1\u9805\u3002\u5C01\u5B58\u5F8C\u4E0D\u6703\u51FA\u73FE\u5728\u7269\u6599\u6E05\u55AE\u3001\u914D\u65B9\u6216\u52A0\u6599\u7684\u9078\u55AE\u88E1\uFF0C\u4F46\u8CC7\u6599\u9084\u5728\uFF0C\u4E4B\u5F8C\u8981\u6062\u5FA9\u96A8\u6642\u53EF\u4EE5\u95DC\u6389\u9019\u500B\u958B\u95DC\u3002"),
     /* @__PURE__ */ React.createElement("button", { onClick: save, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " \u5132\u5B58")
   ));
 }
 function MaterialDetailModal({ material, onClose, onEdit }) {
   const eff = getEffective(material);
   const totalQty = (material.packCount || 1) * (material.packSize || 0);
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, material.isTopping && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(Droplet, { size: 13 }), " \u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528"), material.usableInRecipe === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, "\u4E0D\u6703\u51FA\u73FE\u5728\u914D\u65B9\u7684\u300C\u7269\u6599\u300D\u9078\u9805\u88E1"), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), onEdit ? /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599") : /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 text-center py-1" }, "\u8981\u7DE8\u8F2F\u9019\u9805\u7269\u6599\uFF0C\u8ACB\u5230\u300C\u7269\u6599\u6210\u672C\u300D\u5206\u9801"));
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, material.archived && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-600 bg-stone-100 border border-stone-300 rounded-md px-3 py-1.5 mb-3" }, "\u5DF2\u5C01\u5B58\u2014\u2014\u4E0D\u6703\u51FA\u73FE\u5728\u7269\u6599\u6E05\u55AE\u3001\u914D\u65B9\u6216\u52A0\u6599\u7684\u9078\u55AE\u88E1"), material.isTopping && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(Droplet, { size: 13 }), " \u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528"), material.usableInRecipe === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, "\u4E0D\u6703\u51FA\u73FE\u5728\u914D\u65B9\u7684\u300C\u7269\u6599\u300D\u9078\u9805\u88E1"), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), onEdit ? /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599") : /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 text-center py-1" }, "\u8981\u7DE8\u8F2F\u9019\u9805\u7269\u6599\uFF0C\u8ACB\u5230\u300C\u7269\u6599\u6210\u672C\u300D\u5206\u9801"));
 }
 function Toppings({ materials, toppings, setToppings }) {
   const [editing, setEditing] = useState(null);
@@ -756,11 +799,12 @@ function Toppings({ materials, toppings, setToppings }) {
   const [search, setSearch] = useState("");
   const emptyForm = { name: "", yieldQty: "", yieldUnit: "\u514B", ingredients: [] };
   const [form, setForm] = useState(emptyForm);
-  const flaggedMaterials = materials.filter((m) => m.isTopping);
-  const combinedList = [
+  const flaggedMaterials = materials.filter((m) => m.isTopping && !m.archived);
+  const availableMaterials = sortByName(materials.filter((m) => !m.archived));
+  const combinedList = sortByName([
     ...toppings.map((t) => ({ id: t.id, name: t.name, source: "topping" })),
     ...flaggedMaterials.map((m) => ({ id: m.id, name: m.name, source: "material" }))
-  ];
+  ]);
   const filteredCombined = combinedList.filter(
     (item) => item.name.toLowerCase().includes(search.trim().toLowerCase())
   );
@@ -778,8 +822,8 @@ function Toppings({ materials, toppings, setToppings }) {
     setEditing(t.id);
   };
   const addIngredient = () => {
-    if (materials.length === 0) return;
-    setForm((f) => ({ ...f, ingredients: [...f.ingredients, { materialId: materials[0].id, qty: "" }] }));
+    if (availableMaterials.length === 0) return;
+    setForm((f) => ({ ...f, ingredients: [...f.ingredients, { materialId: availableMaterials[0].id, qty: "" }] }));
   };
   const updateIngredient = (idx, patch) => {
     setForm((f) => ({ ...f, ingredients: f.ingredients.map((ing, i) => i === idx ? { ...ing, ...patch } : ing) }));
@@ -807,7 +851,7 @@ function Toppings({ materials, toppings, setToppings }) {
     "button",
     {
       onClick: openNew,
-      disabled: materials.length === 0,
+      disabled: availableMaterials.length === 0,
       className: "flex items-center gap-1 text-xs font-medium text-teal-700 px-2 py-1 rounded hover:bg-emerald-50 disabled:opacity-40"
     },
     /* @__PURE__ */ React.createElement(Plus, { size: 14 }),
@@ -893,7 +937,7 @@ function Toppings({ materials, toppings, setToppings }) {
       "button",
       {
         onClick: addIngredient,
-        disabled: materials.length === 0,
+        disabled: availableMaterials.length === 0,
         className: "text-xs text-teal-700 font-medium flex items-center gap-1 disabled:opacity-40"
       },
       /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
@@ -909,7 +953,7 @@ function Toppings({ materials, toppings, setToppings }) {
           onChange: (e) => updateIngredient(idx, { materialId: e.target.value }),
           className: "input flex-1"
         },
-        materials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: mm.id, value: mm.id }, mm.name))
+        availableMaterials.map((mm) => /* @__PURE__ */ React.createElement("option", { key: mm.id, value: mm.id }, mm.name))
       ), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1 shrink-0" }, /* @__PURE__ */ React.createElement(
         "input",
         {
@@ -960,12 +1004,12 @@ function Recipes({ materials, toppings, recipes, setRecipes, recipeCost }) {
   const [viewing, setViewing] = useState(null);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({ name: "", sellPrice: "", ingredients: [] });
-  const materialOptions = materials.filter((m) => m.usableInRecipe !== false);
-  const toppingOptions = [
+  const materialOptions = sortByName(materials.filter((m) => m.usableInRecipe !== false && !m.archived));
+  const toppingOptions = sortByName([
     ...toppings.map((t) => ({ id: t.id, name: t.name })),
-    ...materials.filter((m) => m.isTopping).map((m) => ({ id: m.id, name: m.name }))
-  ];
-  const filteredRecipes = recipes.filter(
+    ...materials.filter((m) => m.isTopping && !m.archived).map((m) => ({ id: m.id, name: m.name }))
+  ]);
+  const filteredRecipes = sortByName(recipes).filter(
     (r) => r.name.toLowerCase().includes(search.trim().toLowerCase())
   );
   const openNew = () => {
