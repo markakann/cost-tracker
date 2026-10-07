@@ -289,23 +289,38 @@ function getStdQty(ing, materials, toppings) {
   return raw === void 0 || raw === null || raw === "" || isNaN(Number(raw)) ? null : Number(raw);
 }
 const qtyText = (n) => (Number(n) || 0).toLocaleString("zh-TW", { maximumFractionDigits: 2 });
+function isTeaBase(m) {
+  if (!m) return false;
+  if (m.teaBase === true || m.teaBase === false) return m.teaBase;
+  return !!m.conversion;
+}
 function qtySheetRows(recipe, materials, toppings) {
-  return recipe.ingredients.filter((ing) => {
+  const rows = recipe.ingredients.filter((ing) => {
     if ((ing.kind || "material") !== "material") return true;
     const m = materials.find((x) => x.id === ing.materialId);
     return !m || m.showInQtySheet !== false;
-  }).map((ing) => {
+  }).map((ing, order) => {
+    const kind = ing.kind || "material";
     const info = getIngredientInfo(ing, materials, toppings);
     const std = getStdQty(ing, materials, toppings);
+    const m = kind === "material" ? materials.find((x) => x.id === ing.materialId) : null;
     return {
       name: info.name,
       unit: info.unit,
       qty: Number(ing.qty) || 0,
-      isTopping: (ing.kind || "material") === "topping",
+      isTopping: kind === "topping",
+      isTea: kind === "material" && isTeaBase(m),
+      fillToCup: false,
       std,
-      isException: std !== null && Number(ing.qty) !== std
+      isException: std !== null && Number(ing.qty) !== std,
+      order
     };
   });
+  const rank = (r) => r.isTopping ? 0 : r.isTea ? 2 : 1;
+  rows.sort((a, b) => rank(a) - rank(b) || a.order - b.order);
+  const teaRows = rows.filter((r) => r.isTea);
+  if (teaRows.length > 0) teaRows[teaRows.length - 1].fillToCup = true;
+  return rows;
 }
 function toppingStdList(materials, toppings) {
   return sortByName([
@@ -520,7 +535,8 @@ function Materials({ materials, setMaterials }) {
     usableInRecipe: true,
     archived: false,
     showInQtySheet: true,
-    stdQty: ""
+    stdQty: "",
+    teaBase: false
   };
   const [form, setForm] = useState(emptyForm);
   const archivedCount = materials.filter((m) => m.archived).length;
@@ -547,6 +563,7 @@ function Materials({ materials, setMaterials }) {
       usableInRecipe: m.usableInRecipe !== false,
       archived: !!m.archived,
       showInQtySheet: m.showInQtySheet !== false,
+      teaBase: isTeaBase(m),
       stdQty: m.stdQty === void 0 || m.stdQty === null ? "" : String(m.stdQty)
     });
     setEditing(m.id);
@@ -575,6 +592,7 @@ function Materials({ materials, setMaterials }) {
       usableInRecipe: form.usableInRecipe,
       archived: form.archived,
       showInQtySheet: form.showInQtySheet,
+      teaBase: form.teaBase,
       stdQty: form.isTopping && form.stdQty !== "" && !isNaN(Number(form.stdQty)) ? Number(form.stdQty) : null
     };
     if (editing === "new") {
@@ -706,7 +724,7 @@ function Materials({ materials, setMaterials }) {
       "button",
       {
         type: "button",
-        onClick: () => setForm({ ...form, hasConversion: true }),
+        onClick: () => setForm({ ...form, hasConversion: true, teaBase: true }),
         className: "w-full flex items-center justify-center gap-1 text-xs font-medium text-teal-700 border border-dashed border-teal-300 rounded-md py-2 hover:bg-teal-50 mb-3"
       },
       /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
@@ -792,6 +810,27 @@ function Materials({ materials, setMaterials }) {
       )
     ),
     /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 mb-3 leading-relaxed" }, "\u95DC\u9589\u5F8C\uFF0C\u9019\u9805\u7269\u6599\u9084\u662F\u6703\u7B97\u9032\u914D\u65B9\u6210\u672C\uFF0C\u53EA\u662F\u4E0D\u6703\u51FA\u73FE\u5728\u7D66\u65B0\u4EBA\u770B\u7684\u5B9A\u91CF\u8868\u4E0A\uFF0C\u9069\u5408\u676F\u5B50\u3001\u5C01\u819C\u9019\u985E\u5305\u6750\u3002"),
+    form.showInQtySheet && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        type: "button",
+        onClick: () => setForm({ ...form, teaBase: !form.teaBase }),
+        className: `w-full flex items-center justify-between px-3 py-2.5 rounded-md border mb-2 transition-colors ${form.teaBase ? "bg-teal-50 border-teal-300" : "bg-white border-stone-300"}`
+      },
+      /* @__PURE__ */ React.createElement("span", { className: "text-sm text-stone-700" }, "\u9019\u662F\u8336\u5E95\uFF08\u5B9A\u91CF\u8868\u4E0A\u88DC\u81F3\u6EFF\u676F\uFF09"),
+      /* @__PURE__ */ React.createElement(
+        "span",
+        {
+          className: `w-9 h-5 rounded-full relative shrink-0 transition-colors ${form.teaBase ? "bg-teal-600" : "bg-stone-300"}`
+        },
+        /* @__PURE__ */ React.createElement(
+          "span",
+          {
+            className: `absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${form.teaBase ? "right-0.5" : "left-0.5"}`
+          }
+        )
+      )
+    ), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 mb-3 leading-relaxed" }, "\u958B\u555F\u5F8C\uFF0C\u5B9A\u91CF\u8868\u6703\u628A\u9019\u9805\u6392\u5728\u6700\u5F8C\u3001\u4E0D\u5BEB\u6BEB\u5347\u6578\uFF0C\u6539\u5BEB\u300C\u88DC\u81F3\u6EFF\u676F\u300D\u3002\u914D\u65B9\u6210\u672C\u9084\u662F\u7167\u6BEB\u5347\u6578\u8A08\u7B97\u3002")),
     /* @__PURE__ */ React.createElement(
       "button",
       {
@@ -854,7 +893,7 @@ function Materials({ materials, setMaterials }) {
 function MaterialDetailModal({ material, onClose, onEdit }) {
   const eff = getEffective(material);
   const totalQty = (material.packCount || 1) * (material.packSize || 0);
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, material.archived && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-600 bg-stone-100 border border-stone-300 rounded-md px-3 py-1.5 mb-3" }, "\u5DF2\u5C01\u5B58\u2014\u2014\u4E0D\u6703\u51FA\u73FE\u5728\u7269\u6599\u6E05\u55AE\u3001\u914D\u65B9\u6216\u52A0\u6599\u7684\u9078\u55AE\u88E1"), material.isTopping && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(Droplet, { size: 13 }), " \u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528", material.stdQty !== void 0 && material.stdQty !== null && material.stdQty !== "" && /* @__PURE__ */ React.createElement("span", { className: "ml-auto font-mono" }, "\u6BCF\u676F ", qtyText(material.stdQty), eff.unit)), material.usableInRecipe === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, "\u4E0D\u6703\u51FA\u73FE\u5728\u914D\u65B9\u7684\u300C\u7269\u6599\u300D\u9078\u9805\u88E1"), material.showInQtySheet === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(ClipboardList, { size: 13 }), " \u4E0D\u5217\u5165\u5B9A\u91CF\u8868"), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), onEdit ? /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599") : /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 text-center py-1" }, "\u8981\u7DE8\u8F2F\u9019\u9805\u7269\u6599\uFF0C\u8ACB\u5230\u300C\u7269\u6599\u6210\u672C\u300D\u5206\u9801"));
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: material.name }, material.archived && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-600 bg-stone-100 border border-stone-300 rounded-md px-3 py-1.5 mb-3" }, "\u5DF2\u5C01\u5B58\u2014\u2014\u4E0D\u6703\u51FA\u73FE\u5728\u7269\u6599\u6E05\u55AE\u3001\u914D\u65B9\u6216\u52A0\u6599\u7684\u9078\u55AE\u88E1"), material.isTopping && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(Droplet, { size: 13 }), " \u9019\u9805\u7269\u6599\u4E5F\u80FD\u7576\u52A0\u6599\u9078\u7528", material.stdQty !== void 0 && material.stdQty !== null && material.stdQty !== "" && /* @__PURE__ */ React.createElement("span", { className: "ml-auto font-mono" }, "\u6BCF\u676F ", qtyText(material.stdQty), eff.unit)), material.usableInRecipe === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, "\u4E0D\u6703\u51FA\u73FE\u5728\u914D\u65B9\u7684\u300C\u7269\u6599\u300D\u9078\u9805\u88E1"), material.showInQtySheet === false && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-stone-500 bg-stone-100 border border-stone-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(ClipboardList, { size: 13 }), " \u4E0D\u5217\u5165\u5B9A\u91CF\u8868"), material.showInQtySheet !== false && isTeaBase(material) && /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs text-teal-700 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-3" }, /* @__PURE__ */ React.createElement(ClipboardList, { size: 13 }), " \u8336\u5E95\uFF1A\u5B9A\u91CF\u8868\u4E0A\u6392\u6700\u5F8C\uFF0C\u986F\u793A\u300C\u88DC\u81F3\u6EFF\u676F\u300D"), /* @__PURE__ */ React.createElement("div", { className: "bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 space-y-1 mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u898F\u683C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "\u6BCF\u7BB1", material.packCount, "\u4EF6 \xD7 ", material.packSize, material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u63A1\u8CFC\u7E3D\u91CF"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, totalQty.toLocaleString("zh-TW"), " ", material.purchaseUnit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6574\u7BB1\uFF0F\u6574\u6279\u7E3D\u91D1\u984D"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice))), material.packCount > 1 && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs text-emerald-800" }, /* @__PURE__ */ React.createElement("span", null, "\u6BCF\u4EF6\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono" }, "$", money(material.totalPrice / material.packCount))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-800 font-medium" }, "\u6BCF", material.purchaseUnit, "\u6210\u672C"), /* @__PURE__ */ React.createElement("span", { className: "font-mono font-semibold text-teal-700" }, "$", unitMoney(eff.purchaseCost)))), material.conversion && /* @__PURE__ */ React.createElement("div", { className: "border border-teal-200 bg-teal-50 rounded-md p-3 space-y-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-medium text-teal-800" }, "\u8ABF\u88FD\u8F49\u63DB"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md px-2 py-1.5 text-xs text-stone-600 leading-relaxed" }, material.conversion.inputQty, material.purchaseUnit, " \xD7 $", unitMoney(eff.purchaseCost), " = $", money(material.conversion.inputQty * eff.purchaseCost), "\uFF0C\u505A\u51FA ", material.conversion.outputQty, material.conversion.outputUnit, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-semibold text-teal-700 mt-1" }, "\u2192 \u6BCF", material.conversion.outputUnit, "\u6210\u672C $", unitMoney(eff.cost)))), onEdit ? /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u7269\u6599") : /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 text-center py-1" }, "\u8981\u7DE8\u8F2F\u9019\u9805\u7269\u6599\uFF0C\u8ACB\u5230\u300C\u7269\u6599\u6210\u672C\u300D\u5206\u9801"));
 }
 function Toppings({ materials, toppings, setToppings }) {
   const [editing, setEditing] = useState(null);
@@ -1317,7 +1356,7 @@ function QtySheet({ materials, toppings, recipes }) {
         className: `flex items-center justify-between text-sm py-1 ${row.isException ? "bg-amber-50 -mx-1.5 px-1.5 rounded" : ""}`
       },
       /* @__PURE__ */ React.createElement("span", { className: "text-stone-700 truncate flex items-center gap-1 min-w-0" }, row.isTopping && /* @__PURE__ */ React.createElement(Droplet, { size: 11, className: "text-teal-500 shrink-0" }), /* @__PURE__ */ React.createElement("span", { className: "truncate" }, row.name), row.isException && /* @__PURE__ */ React.createElement("span", { className: "text-xs text-amber-700 border border-amber-300 rounded px-1 shrink-0" }, "\u7279\u4F8B")),
-      /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, qtyText(row.qty), row.unit, row.isException && /* @__PURE__ */ React.createElement("span", { className: "text-xs text-amber-700 ml-1" }, "\uFF08\u6A19\u6E96", qtyText(row.std), "\uFF09"))
+      row.fillToCup ? /* @__PURE__ */ React.createElement("span", { className: "text-teal-700 font-medium shrink-0 ml-2" }, "\u88DC\u81F3\u6EFF\u676F") : /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, qtyText(row.qty), row.unit, row.isException && /* @__PURE__ */ React.createElement("span", { className: "text-xs text-amber-700 ml-1" }, "\uFF08\u6A19\u6E96", qtyText(row.std), "\uFF09"))
     )), rows.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 py-1" }, "\u6C92\u6709\u8981\u5217\u51FA\u7684\u7528\u6599")));
   }), recipes.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u5230\u300C\u914D\u65B9\u6210\u672C\u300D\u65B0\u589E\u914D\u65B9\u5F8C\uFF0C\u5B9A\u91CF\u8868\u6703\u81EA\u52D5\u7522\u751F"), recipes.length > 0 && filtered.length === 0 && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u98F2\u54C1\u6216\u7528\u6599")));
 }
@@ -1328,8 +1367,8 @@ function QtyPrintSheet({ materials, toppings, recipes }) {
   const dateText = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
   return /* @__PURE__ */ React.createElement("div", { className: "print-only qty-print" }, /* @__PURE__ */ React.createElement("div", { className: "qp-head" }, /* @__PURE__ */ React.createElement("h1", null, "\u98F2\u54C1\u7269\u6599\u5B9A\u91CF\u8868"), /* @__PURE__ */ React.createElement("p", null, "\u5370\u88FD\u65E5\u671F ", dateText, " \xB7 \u5171 ", sorted.length, " \u6B3E\u98F2\u54C1")), stdList.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "qp-std" }, /* @__PURE__ */ React.createElement("h2", null, "\u52A0\u6599\u6BCF\u676F\u6A19\u6E96\u4EFD\u91CF"), /* @__PURE__ */ React.createElement("div", { className: "qp-std-grid" }, stdList.map((t) => /* @__PURE__ */ React.createElement("div", { key: t.id, className: "qp-std-item" }, /* @__PURE__ */ React.createElement("span", null, t.name), /* @__PURE__ */ React.createElement("b", null, t.std === null ? "\u2014" : `${qtyText(t.std)}${t.unit}`))))), /* @__PURE__ */ React.createElement("div", { className: "qp-cards" }, sorted.map((r) => {
     const rows = qtySheetRows(r, materials, toppings);
-    return /* @__PURE__ */ React.createElement("div", { key: r.id, className: "qp-card" }, /* @__PURE__ */ React.createElement("h3", null, r.name), /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("tbody", null, rows.map((row, i) => /* @__PURE__ */ React.createElement("tr", { key: i, className: row.isException ? "qp-ex" : "" }, /* @__PURE__ */ React.createElement("td", null, row.isException ? "\u2605 " : "", row.name), /* @__PURE__ */ React.createElement("td", { className: "qp-qty" }, qtyText(row.qty), row.unit, row.isException ? `\uFF08\u6A19\u6E96${qtyText(row.std)}\uFF09` : ""))))));
-  })), /* @__PURE__ */ React.createElement("p", { className: "qp-foot" }, "\u2605 \uFF1D \u9019\u676F\u7684\u52A0\u6599\u4EFD\u91CF\u8DDF\u6A19\u6E96\u4E0D\u540C\uFF0C\u8ACB\u7279\u5225\u6CE8\u610F"));
+    return /* @__PURE__ */ React.createElement("div", { key: r.id, className: "qp-card" }, /* @__PURE__ */ React.createElement("h3", null, r.name), /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("tbody", null, rows.map((row, i) => /* @__PURE__ */ React.createElement("tr", { key: i, className: row.isException ? "qp-ex" : "" }, /* @__PURE__ */ React.createElement("td", null, row.isException ? "\u2605 " : "", row.name), /* @__PURE__ */ React.createElement("td", { className: "qp-qty" }, row.fillToCup ? "\u88DC\u81F3\u6EFF\u676F" : `${qtyText(row.qty)}${row.unit}${row.isException ? `\uFF08\u6A19\u6E96${qtyText(row.std)}\uFF09` : ""}`))))));
+  })), /* @__PURE__ */ React.createElement("p", { className: "qp-foot" }, "\u7528\u6599\u9806\u5E8F\uFF1A\u52A0\u6599 \u2192 \u5176\u4ED6\u7269\u6599 \u2192 \u8336\uFF08\u6700\u5F8C\u52A0\uFF0C\u88DC\u81F3\u6EFF\u676F\uFF09\u3002\u2605 \uFF1D \u9019\u676F\u7684\u52A0\u6599\u4EFD\u91CF\u8DDF\u6A19\u6E96\u4E0D\u540C\uFF0C\u8ACB\u7279\u5225\u6CE8\u610F"));
 }
 function PrintStyles() {
   return /* @__PURE__ */ React.createElement("style", null, `
