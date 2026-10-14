@@ -1400,7 +1400,7 @@ function qtyCells(entry) {
 }
 function QtyLines({ text, labelClass }) {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, String(text || "").split("\n").map((line, i) => {
-    const isLabel = line.trim() !== "" && !/[：:]/.test(line);
+    const isLabel = line.trim() !== "" && !/[：:]/.test(line) && !/\d/.test(line);
     return /* @__PURE__ */ React.createElement("div", { key: i, className: isLabel ? labelClass : void 0 }, line.trim() === "" ? "\xA0" : line.replace(/(\d)\s+(?=[A-Za-z])/g, "$1\xA0"));
   }));
 }
@@ -1597,7 +1597,7 @@ function Handbook({ handbook, setHandbook }) {
         className: "relative rounded bg-stone-50 border border-stone-200 px-1.5 py-1 text-xs leading-relaxed text-stone-700 break-words",
         style: { gridColumn: `span ${cell.span} / span ${cell.span}`, minHeight: "2rem" }
       },
-      cell.text ? /* @__PURE__ */ React.createElement(QtyLines, { text: cell.text, labelClass: "font-semibold text-stone-800" }) : /* @__PURE__ */ React.createElement(DiagonalLine, null)
+      cell.text ? /* @__PURE__ */ React.createElement(QtyLines, { text: cell.text, labelClass: "font-extrabold text-stone-900" }) : /* @__PURE__ */ React.createElement(DiagonalLine, null)
     ))));
   }), editMode && !q && /* @__PURE__ */ React.createElement(
     "button",
@@ -1751,7 +1751,7 @@ function HbEntryModal({ entry, onSave, onDelete, onClose }) {
     double: entry ? entry.double : ""
   });
   const ok = form.name.trim() !== "";
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: entry ? "\u7DE8\u8F2F\u98F2\u54C1\u5B9A\u91CF" : "\u65B0\u589E\u98F2\u54C1\u5B9A\u91CF", onDelete, deleteLabel: form.name }, /* @__PURE__ */ React.createElement(Field, { label: "\u54C1\u540D\uFF08\u591A\u6B3E\u5B9A\u91CF\u4E00\u6A23\u53EF\u4EE5\u7528 / \u5206\u958B\uFF09" }, /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u719F\u6210\u51B7\u9732/\u6625\u82BD\u51B7\u9732", className: "input" })), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-1 mb-3 leading-relaxed" }, "\u6BCF\u683C\u81EA\u7531\u586B\u5BEB\uFF0C\u4E00\u884C\u4E00\u500B\u3002\u6C92\u6709\u5192\u865F\u7684\u884C\uFF08\u4F8B\u5982\u300C\u725B\u5976\u300D\uFF09\u6703\u81EA\u52D5\u52A0\u7C97\u3002", /* @__PURE__ */ React.createElement("br", null), "\u7559\u7A7A = \u4E0D\u9069\u7528\uFF08\u756B\u659C\u7DDA\uFF09\uFF1B\u8DDF\u5DE6\u908A\u4E00\u683C\u5167\u5BB9\u4E00\u6A23\u6703\u81EA\u52D5\u5408\u4F75\u3002"), QTY_COLS.map((c, i) => /* @__PURE__ */ React.createElement("div", { key: c.key, className: "mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, c.label, "\u5B9A\u91CF"), i > 0 && /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: entry ? "\u7DE8\u8F2F\u98F2\u54C1\u5B9A\u91CF" : "\u65B0\u589E\u98F2\u54C1\u5B9A\u91CF", onDelete, deleteLabel: form.name }, /* @__PURE__ */ React.createElement(Field, { label: "\u54C1\u540D\uFF08\u591A\u6B3E\u5B9A\u91CF\u4E00\u6A23\u53EF\u4EE5\u7528 / \u5206\u958B\uFF09" }, /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u719F\u6210\u51B7\u9732/\u6625\u82BD\u51B7\u9732", className: "input" })), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-1 mb-3 leading-relaxed" }, "\u6BCF\u683C\u81EA\u7531\u586B\u5BEB\uFF0C\u4E00\u884C\u4E00\u500B\u3002\u6C92\u6709\u5192\u865F\u3001\u4E5F\u6C92\u6709\u6578\u5B57\u7684\u884C\uFF08\u4F8B\u5982\u300C\u725B\u5976\u300D\uFF09\u6703\u81EA\u52D5\u52A0\u7C97\u3002", /* @__PURE__ */ React.createElement("br", null), "\u7559\u7A7A = \u4E0D\u9069\u7528\uFF08\u756B\u659C\u7DDA\uFF09\uFF1B\u8DDF\u5DE6\u908A\u4E00\u683C\u5167\u5BB9\u4E00\u6A23\u6703\u81EA\u52D5\u5408\u4F75\u3002"), QTY_COLS.map((c, i) => /* @__PURE__ */ React.createElement("div", { key: c.key, className: "mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, c.label, "\u5B9A\u91CF"), i > 0 && /* @__PURE__ */ React.createElement(
     "button",
     {
       type: "button",
@@ -1831,13 +1831,15 @@ function PrintStyles() {
         .hbp-rec-main { color: #c9211e; font-weight: 600; }
         .hbp-table, .hbp-extras { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9.5pt; line-height: 1.6; }
         .hbp-table th, .hbp-table td, .hbp-extras td { border: 0.75pt solid #333; padding: 3pt 6pt; vertical-align: top; text-align: left; }
-        .hbp-table th { font-weight: 600; text-align: center; padding: 6pt 4pt; }
+        .hbp-table th { font-weight: 800; color: #000; text-align: center; padding: 6pt 4pt; }
         .hbp-table tr, .hbp-extras tr { break-inside: avoid; }
-        .hbp-entry-name { text-align: center !important; vertical-align: middle !important; font-weight: 600; }
-        .hbp-label { font-weight: 600; }
+        .hbp-entry-name { text-align: center !important; vertical-align: middle !important; font-weight: 800; color: #000 !important; }
+        .hbp-table td { color: #333; }
+        .hbp-label { font-weight: 800; font-size: 10.5pt; color: #000; }
+        .hbp-label:not(:first-child) { margin-top: 3pt; }
         .hbp-na { position: relative; }
         .hbp-extras { margin-top: 14pt; }
-        .hbp-extra-name { width: 25%; font-weight: 600; }
+        .hbp-extra-name { width: 25%; font-weight: 800; color: #000 !important; }
         .hbp-extra-content { white-space: pre-line; }
       }
     `);
