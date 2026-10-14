@@ -93,6 +93,10 @@ const Cloud = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* 
 const Search = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("line", { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }));
 const ChevronRight = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "9 18 15 12 9 6" }));
 const Droplet = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("path", { d: "M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" }));
+const Printer = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "6 9 6 2 18 2 18 9" }), /* @__PURE__ */ React.createElement("path", { d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" }), /* @__PURE__ */ React.createElement("rect", { x: "6", y: "14", width: "12", height: "8" }));
+const BookOpen = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("path", { d: "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" }), /* @__PURE__ */ React.createElement("path", { d: "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" }));
+const ChevronUp = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "18 15 12 9 6 15" }));
+const ChevronDown = (p) => /* @__PURE__ */ React.createElement(IconBase, { ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "6 9 12 15 18 9" }));
 const initialMaterials = [
   {
     id: "m1",
@@ -220,6 +224,190 @@ const initialRecipes = [
     ]
   }
 ];
+const hbItem = (id, name, desc, rec) => ({ id, name, desc, rec: rec || "" });
+const initialHandbook = {
+  categories: [
+    { id: "hc1", name: "\u7D05/\u7DA0\u8336", items: [
+      hbItem("hi1", "\u719F\u6210\u7D05\u8336", "\u3010\u6FC3\u90C1\u5E36\u679C\u9999\u7684\u62DB\u724C\u7D05\u8336\u3011\uFF0C\u53EF\u89E3\u725B\u3001\u8C6C\u3001\u96DE\u7684\u6CB9\u8102\u81A9\u611F\uFF0C\u8336\u8449\u4F86\u81EA\u65AF\u91CC\u862D\u5361\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi2", "\u9E97\u6625\u7D05\u8336", "\u8336\u8F03\u3010\u6E05\u6DE1\u5E36\u82B1\u9999\u7684\u7D05\u8336\u3011\uFF0C\u53EF\u4E2D\u548C\u9B5A\u3001\u8C9D\u985E\u7B49\u6D77\u9BAE\u7684\u8165\u7FB6\u5473\uFF0C\u8336\u8449\u4F86\u81EA\u65AF\u91CC\u862D\u5361\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi3", "\u6625\u82BD\u7DA0\u8336", "\u8336\u8449\u7522\u81EA\u5357\u6295\u57D4\u91CC\uFF0C\u70BA\u3010\u7DA0\u8336\u3011\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi4", "\u80ED\u8102\u7D05\u8336", "\u5E36\u3010\u871C\u6843\u9999\u6C23\u7684\u7D05\u8336\u3011\uFF0C\u8336\u8449\u4E2D\u52A0\u5165\u8309\u8389\u82B1\u82BD\u8207\u73AB\u7470\u82B1\u74E3\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi5", "\u91D1\u871C\u719F\u6210", "\u62DB\u724C\u719F\u6210\u7D05\u8336\u52A0\u4E0A\u9F8D\u773C\u871C\uFF0C\u70BA\u3010\u8702\u871C\u7D05\u8336\u3011\uFF0C\u751C\u5EA6\u50C5\u7121\u7CD6\u3001\u5FAE\u7CD6\u8207\u6B63\u5E38\uFF0C\u7121\u7CD6\u50C5\u8702\u871C\u751C\uFF0C\u5FAE\u7CD6\u8207\u6B63\u5E38\u7686\u984D\u5916\u52A0\u8517\u7CD6\uFF0C\u4EA6\u6709\u5C11\u91D1\u871C\u53EF\u9078\u64C7\u3002", "\u5FAE\u51B0\u7121\u7CD6\uFF08\u8702\u871C\u751C\uFF09"),
+      hbItem("hi6", "\u80ED\u8102\u591A\u591A", "\u5E36\u871C\u6843\u9999\u7684\u80ED\u8102\u7D05\u8336\u52A0\u4E0A\u990A\u6A02\u591A\uFF0C\u70BA\u3010\u591A\u591A\u7D05\u8336\u3011\uFF1B\u7121\u7CD6\u5373\u990A\u6A02\u591A\u751C\uFF0C\u6700\u4F4E\u51B0\u91CF\u70BA\u53BB\u51B0\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi7", "\u592A\u5983\u719F\u6210", "\u5E36\u679C\u9999\u7684\u719F\u6210\u7D05\u8336\u52A0\u4E0A\u9ED1\u5496\u5561\uFF0C\u70BA\u3010\u5496\u5561\u7D05\u8336\u3011\uFF0C\u52A010\u5143\u53EF\u5347\u7D1A\u5496\u5561\u7279\u6FC3\u7248\u672C\u3002", "\u5C11\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc2", name: "\u51B7\u9732", items: [
+      hbItem("hi8", "\u96EA\u82B1\u51B7\u9732", "\u4F86\u81EA\u9AD8\u96C4\u4E4B\u624B\u5DE5\u51AC\u74DC\u78DA\uFF0C\u6BCF\u65E5\u71AC\u716E\u7684\u3010\u51AC\u74DC\u8336\u3011\uFF0C\u751C\u5EA6\u50C5\u6B63\u5E38\u8207\u6E1B\u7CD6\uFF0C\u6B63\u5E38\u662F\u51AC\u74DC\u8336\u751C\uFF0C\u6E1B\u7CD6\u6703\u52A0\u516550CC\u7DA0\u8336\u6216\u98F2\u7528\u6C34\u964D\u4F4E\u751C\u5EA6\u3002", "\u5FAE\u51B0\u6B63\u5E38\uFF08\u51AC\u74DC\u8336\u751C\uFF09"),
+      hbItem("hi9", "\u719F\u6210\u51B7\u9732", "\u5E36\u679C\u9999\u7684\u719F\u6210\u7D05\u8336\u52A0\u4E0A\u96EA\u82B1\u51B7\u9732\uFF0C\u3010\u51AC\u74DC\u7D05\u8336\u3011\uFF0C\u7121\u7CD6\u5373\u51AC\u74DC\u8336\u672C\u8EAB\u7684\u751C\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi10", "\u6625\u82BD\u51B7\u9732", "\u6625\u82BD\u7DA0\u8336\u52A0\u4E0A\u96EA\u82B1\u51B7\u9732\uFF0C\u3010\u51AC\u74DC\u7DA0\u8336\u3011\uFF0C\u7121\u7CD6\u5373\u51AC\u74DC\u8336\u672C\u8EAB\u7684\u751C\u3002", "\u5FAE\u51B0\u7121\u7CD6"),
+      hbItem("hi11", "\u80ED\u8102\u51B7\u9732", "\u5E36\u871C\u6843\u9999\u7684\u80ED\u8102\u7D05\u8336\u52A0\u4E0A\u96EA\u82B1\u51B7\u9732\uFF0C\u7121\u7CD6\u5373\u51AC\u74DC\u8336\u672C\u8EAB\u7684\u751C\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi12", "\u6625\u6885\u51B0\u8336", "\u9752\u6885\u6C41\u52A0\u4E0A\u51AC\u74DC\u8336\uFF0C\u751C\u5EA6\u50C5\u6B63\u5E38\u8207\u6E1B\u7CD6\uFF0C\u6B63\u5E38\u662F\u51AC\u74DC\u8336\u751C\uFF0C\u6E1B\u7CD6\u6703\u52A0\u516550CC\u7DA0\u8336\u6216\u98F2\u7528\u6C34\u964D\u4F4E\u751C\u5EA6\u3002", "\u5C11\u51B0\u6E1B\u7CD6\uFF08\u52A050CC\u7DA0\u8336\uFF09")
+    ] },
+    { id: "hc3", name: "\u6AB8\u6AAC", items: [
+      hbItem("hi13", "\u719F\u6AB8\u7D05\u8336", "\u62DB\u724C\u5E36\u679C\u9999\u7684\u719F\u6210\u7D05\u8336\u52A0\u4E0A\u6AB8\u6AAC\u6C41\uFF0C\u70BA\u3010\u6AB8\u6AAC\u7D05\u8336\u3011\uFF0C\u7121\u7CD6\u8F03\u9178\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi14", "\u6625\u6AB8\u7DA0\u8336", "\u6625\u82BD\u7DA0\u8336\u52A0\u4E0A\u6AB8\u6AAC\u6C41\uFF0C\u70BA\u3010\u6AB8\u6AAC\u7DA0\u8336\u3011\uFF0C\u7121\u7CD6\u8F03\u9178\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi15", "\u91D1\u871C\u6AB8\u6AAC", "\u8702\u871C\u52A0\u4E0A\u6AB8\u6AAC\u6C41\u8207\u6C34\uFF0C\u70BA\u3010\u8702\u871C\u6AB8\u6AAC\u3011\uFF0C\u751C\u5EA6\u7121\u7CD6\u3001\u5FAE\u7CD6\u3001\u534A\u7CD6\u3001\u5C11\u7CD6\u3001\u6B63\u5E38\uFF0C\u7121\u4E00\u5206\u7CD6\u4E4B\u9078\u9805\uFF1B\u7121\u7CD6\u50C5\u8702\u871C\u751C\uFF0C\u5176\u4ED6\u751C\u5EA6\u984D\u5916\u52A0\u8517\u7CD6\uFF0C\u4EA6\u6709\u5C11\u91D1\u871C\u53EF\u9078\u64C7\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi16", "\u6AB8\u6AAC\u51B7\u9732", "\u51AC\u74DC\u8336\u52A0\u4E0A\u6AB8\u6AAC\u6C41\uFF0C\u70BA\u3010\u51AC\u74DC\u6AB8\u6AAC\u3011\uFF0C\u6B63\u5E38\u662F\u51AC\u74DC\u8336\u751C\uFF0C\u6E1B\u7CD6\u6703\u52A0\u516550CC\u7DA0\u8336\u6216\u98F2\u7528\u6C34\u964D\u4F4E\u751C\u5EA6\u3002", "\u5C11\u51B0\u51AC\u74DC\u751C")
+    ] },
+    { id: "hc4", name: "\u6B50\u857E", items: [
+      hbItem("hi17", "\u719F\u6210\u6B50\u857E", "\u3010\u9BAE\u5976\u8336\u3011\uFF0C\u7FA9\u7F8E\u9BAE\u5976\u52A0\u4E0A\u6B50\u857E\u7D05\u8336\uFF0C\u5728\u8A31\u591A\u624B\u6416\u9BAE\u5976\u8336\u4E4B\u4E2D\u8336\u5473\u5C6C\u504F\u91CD\uFF1B\u6B50\u857E\u7D05\u8336\u662F\u7C89\u672B\u8336\u8449\uFF0C\u50C5\u9069\u5408\u642D\u914D\u9BAE\u4E73\u6216\u5976\u7CBE\u88FD\u6210\u9BAE\u5976\u8336\u6216\u5976\u8336\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi18", "\u767D\u7389\u6B50\u857E", "\u3010\u73CD\u73E0\u9BAE\u5976\u8336\u3011\uFF0C\u767D\u7389\u662F\u767D\u8272\u7C89\u5713\uFF0C\u70BA\u4E2D\u578B\u73CD\u73E0\uFF0C\u73CD\u73E0\u5E36\u8457\u8702\u871C\u9999\u6C23\uFF0C\u70BA\u6B50\u857E\u7CFB\u5217\u7684\u9996\u9078\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi19", "\u51B7\u9732\u6B50\u857E", "\u3010\u51AC\u74DC\u9BAE\u5976\u3011\uFF1B\u751C\u5EA6\u50C5\u6B63\u5E38\u8207\u6E1B\u7CD6\uFF0C\u6B63\u5E38\u662F\u51AC\u74DC\u8336\u751C\uFF0C\u6E1B\u7CD6\u6703\u52A0\u516550CC\u7DA0\u8336\u6216\u6C34\u964D\u4F4E\u751C\u5EA6\u3002", "\u5FAE\u51B0\u6B63\u5E38\uFF08\u51AC\u74DC\u8336\u751C\uFF09"),
+      hbItem("hi20", "\u91D1\u871C\u6B50\u857E", "\u3010\u8702\u871C\u9BAE\u5976\u8336\u3011\uFF0C\u5728\u9BAE\u5976\u8336\u7684\u57FA\u790E\u4E0A\u52A0\u5165\u9F8D\u773C\u871C\uFF0C\u7121\u7CD6\u5373\u70BA\u8702\u871C\u751C\uFF0C\u5FAE\u7CD6\u8207\u6B63\u5E38\u7686\u984D\u5916\u52A0\u8517\u7CD6\uFF0C\u4EA6\u6709\u5C11\u91D1\u871C\u53EF\u9078\u64C7\u3002", "\u5FAE\u51B0\u7121\u7CD6\uFF08\u8702\u871C\u751C\uFF09"),
+      hbItem("hi21", "\u80ED\u8102\u6B50\u857E", "\u3010\u871C\u6843\u9999\u9BAE\u5976\u8336\u3011\uFF0C\u4EE5\u871C\u6843\u9999\u6C23\u7684\u80ED\u8102\u7D05\u8336\u52A0\u4E0A\u9BAE\u5976\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi22", "\u719F\u6210\u699B\u679C\u6B50\u857E", "\u699B\u679C\u7CD6\u6F3F\u52A0\u4E0A\u7FA9\u7F8E\u9BAE\u5976\u8207\u6B50\u857E\u7D05\u8336\uFF0C\u70BA\u3010\u699B\u679C\u98A8\u5473\u9BAE\u5976\u8336\u3011\uFF0C\u7121\u7CD6\u70BA\u699B\u679C\u7CD6\u6F3F\u751C\uFF0C\u53EF\u984D\u5916\u52A0\u7CD6\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi23", "\u9D1B\u9D26\u6B50\u857E", "\u5496\u5561\u7CD6\u6F3F\u52A0\u4E0A\u7FA9\u7F8E\u9BAE\u5976\u8207\u6B50\u857E\u7D05\u8336\uFF0C\u70BA\u3010\u5496\u5561\u98A8\u5473\u9BAE\u5976\u8336\u3011\uFF0C\u7121\u7CD6\u70BA\u5496\u5561\u7CD6\u6F3F\u751C\uFF0C\u53EF\u984D\u5916\u52A0\u7CD6\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi24", "\u58A8\u7389\u9D1B\u9D26\u6B50\u857E", "\u5149\u6CC9\u5496\u5561\u51CD\u52A0\u4E0A\u5496\u5561\u7CD6\u6F3F\u3001\u7FA9\u7F8E\u9BAE\u5976\u8207\u6B50\u857E\u7D05\u8336\uFF0C\u7121\u7CD6\u70BA\u5496\u5561\u7CD6\u6F3F\u751C\uFF0C\u53EF\u984D\u5916\u52A0\u7CD6\uFF0C\u58A8\u7389\u4E0D\u53EF\u505A\u6EAB\u3001\u71B1\u98F2\u3002", "\u5C11\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc5", name: "\u7A40\u5948\u8336", items: [
+      hbItem("hi25", "\u8F15\u7E96\u7A40\u5948\u8336", "\u7A40\u5948\u8336\u662F\u4F7F\u7528\u7384\u7C73\u3001\u9ED1\u8C46\u3001\u854E\u9EA5\u3001\u7D05\u570B\u5BF6\u8336\u88FD\u6210\uFF0C\u662F\u3010\u7121\u5496\u5561\u56E0\u7A40\u7269\u8336\u3011\uFF0C\u559D\u8D77\u4F86\u5E36\u6709\u7A40\u7269\u9999\u6C23\uFF0C\u4E5F\u76F8\u5C0D\u6E05\u723D\u3002", "\u5C11\u51B0\u7121\u7CD6"),
+      hbItem("hi26", "\u7A40\u5948\u51B7\u9732", "\u662F\u4F7F\u7528\u7279\u9078\u3010\u7A40\u7269\u570B\u5BF6\u8336\u52A0\u4E0A\u51AC\u74DC\u8336\u3011\uFF0C\u5E36\u6709\u51AC\u74DC\u8336\u751C\u4EE5\u53CA\u70D8\u70E4\u904E\u7684\u7C73\u9999\u3002", "\u5C11\u51B0\u7121\u7CD6\uFF08\u51AC\u74DC\u8336\u751C\uFF09"),
+      hbItem("hi27", "\u7A40\u5948\u6B50\u857E", "\u3010\u7A40\u7269\u570B\u5BF6\u8336\u52A0\u4E0A\u9BAE\u5976\u3011\uFF0C\u662F\u7121\u5496\u5561\u56E0\u7684\u7A40\u7269\u9BAE\u5976\u8336\u3002", "\u5C11\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc6", name: "\u96EA\u85CF", items: [
+      hbItem("hi28", "\u96EA\u85CF\u7D05\u8336", "\u7FA9\u7F8E\u51B0\u6DC7\u6DCB\u52A0\u4E0A\u9E97\u6625\u7D05\u8336\u8207\u6B50\u857E\u7D05\u8336\uFF0C\u70BA\u3010\u51B0\u6DC7\u6DCB\u7D05\u8336\u3011\uFF0C\u7121\u7CD6\u70BA\u51B0\u6DC7\u6DCB\u751C\uFF0C\u53EF\u984D\u5916\u52A0\u7CD6\uFF0C\u7121\u5E38\u6EAB\u3001\u6EAB\u3001\u71B1\u98F2\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi29", "\u96EA\u85CF\u5976\u8336", "\u3010\u51B0\u6DC7\u6DCB\u5976\u8336\u3011\uFF0C\u7FA9\u7F8E\u9999\u8349\u51B0\u6DC7\u6DCB\u52A0\u4E0A\u5976\u7CBE\u8207\u6B50\u857E\u7D05\u8336\u7121\u7CD6\u70BA\u51B0\u6DC7\u6DCB\u751C\uFF0C\u53EF\u984D\u5916\u52A0\u7CD6\uFF0C\u7121\u5E38\u6EAB\u3001\u6EAB\u3001\u71B1\u98F2\u3002", "\u5C11\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc7", name: "\u5976\u8336", items: [
+      hbItem("hi30", "\u719F\u6210\u5976\u8336", "\u3010\u5976\u7CBE\u5976\u8336\u3011\uFF0C\u662F\u53EF\u4E0D\u53EF\u7279\u88FD\u5976\u7CBE\u52A0\u4E0A\u6B50\u857E\u7D05\u8336\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi31", "\u6625\u82BD\u5976\u8336", "\u3010\u5976\u7CBE\u5976\u7DA0\u3011\uFF0C\u662F\u53EF\u4E0D\u53EF\u7279\u88FD\u5976\u7CBE\u52A0\u4E0A\u6625\u82BD\u7DA0\u8336\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi32", "\u80ED\u8102\u5976\u8336", "\u3010\u871C\u6843\u9999\u5976\u7CBE\u5976\u8336\u3011\uFF0C\u662F\u53EF\u4E0D\u53EF\u7279\u88FD\u5976\u7CBE\u52A0\u4E0A\u80ED\u8102\u7D05\u8336\u3002", "\u5C11\u51B0\u5FAE\u7CD6"),
+      hbItem("hi33", "\u767D\u7389\u5976\u8336", "\u3010\u73CD\u73E0\u5976\u8336\u3011\uFF0C\u719F\u6210\u5976\u8336\u52A0\u4E0A\u8702\u871C\u9999\u767D\u8272\u73CD\u73E0\u3002", "\u5C11\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc8", name: "\u534A\u719F\u70CF\u9F8D", items: [
+      hbItem("hi34", "\u534A\u719F\u70CF\u9F8D", "\u9078\u7528\u8077\u4EBA\u5DE5\u85DD\u624B\u6CD5\uFF0C\u7CBE\u5FC3\u70D8\u7119\u7684\u7119\u706B\u3010\u70CF\u9F8D\u8336\u3011\uFF0C\u5E36\u6709\u6EAB\u6F64\u7119\u706B\u70CF\u9F8D\u8336\u9999\uFF0C\u5589\u97FB\u56DE\u7518\u70BA\u719F\u679C\u98A8\u5473\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi35", "\u534A\u719F\u70CF\u9F8D\u51B7\u9732", "\u3010\u51AC\u74DC\u70CF\u9F8D\u3011\uFF0C\u6EAB\u6F64\u7119\u706B\u70CF\u9F8D\u8336\u9999\uFF0C\u7D50\u5408\u51AC\u74DC\u7126\u7CD6\u74DC\u679C\u9999\uFF0C\u7121\u7CD6\u5373\u51AC\u74DC\u8336\u672C\u8EAB\u7684\u751C\u3002", "\u5FAE\u51B0\u7121\u7CD6"),
+      hbItem("hi36", "\u534A\u719F\u70CF\u9F8D\u539A\u4E73", "\u6EAB\u6F64\u7119\u706B\u70CF\u9F8D\u8336\u9999\u52A0\u4E0A\u8907\u65B9\u8ABF\u548C\u4E73\u4EE5\u53CA\u9BAE\u5976\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi37", "\u534A\u719F\u70CF\u9F8D\u6B50\u857E", "\u3010\u70CF\u9F8D\u9BAE\u5976\u8336\u3011\uFF0C\u6EAB\u6F64\u7119\u706B\u70CF\u9F8D\u8336\u9999\u52A0\u4E0A\u9BAE\u5976\u3002", "\u5FAE\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc9", name: "\u8336\u82B1\u8F15\u7119\u70CF\u9F8D", items: [
+      hbItem("hi38", "\u8336\u82B1\u8F15\u7119\u70CF\u9F8D", "\u5E36\u8336\u82B1\u9999\u6C23\u7684\u4E2D\u6DFA\u7119\u706B\u70CF\u9F8D\u8336\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi39", "\u8336\u82B1\u70CF\u9F8D\u6885", "\u3010\u6885\u5B50\u70CF\u9F8D\u3011\uFF0C\u9752\u6885\u6C41\u52A0\u4E0A\u8336\u82B1\u9999\u6C23\u70CF\u9F8D\u8336\uFF0C\u7121\u7CD6\u70BA\u6885\u6C41\u751C\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi40", "\u8336\u82B1\u70CF\u9F8D\u591A\u591A", "\u3010\u591A\u591A\u70CF\u9F8D\u3011\uFF0C\u8336\u82B1\u9999\u6C23\u70CF\u9F8D\u8336\u52A0\u4E0A\u990A\u6A02\u591A\uFF0C\u7121\u7CD6\u70BA\u990A\u6A02\u591A\u751C\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi41", "\u8336\u82B1\u70CF\u9F8D\u539A\u4E73", "\u8336\u82B1\u9999\u6C23\u70CF\u9F8D\u8336\u52A0\u4E0A\u8907\u65B9\u8ABF\u548C\u4E73\u4EE5\u53CA\u9BAE\u5976\u3002", "\u5FAE\u51B0\u5FAE\u7CD6"),
+      hbItem("hi42", "\u751F\u8336\u70CF\u9F8D\u539A\u4E73", "\u751F\u8336\u662F\u4EE5\u53F0\u7063\u7DA0\u8336\u7C89\u642D\u4E0A\u8336\u82B1\u9999\u6C23\u70CF\u9F8D\u8336\u8F15\u5237\u800C\u6210\uFF0C\u518D\u52A0\u4E0A\u8907\u65B9\u8ABF\u548C\u4E73\u4EE5\u53CA\u9BAE\u5976\uFF0C\u5165\u53E3\u4EE5\u7DA0\u8336\u6E05\u9999\u958B\u5834\uFF0C\u8ABF\u548C\u4E73\u8207\u9BAE\u5976\u67D4\u5316\u8336\u9AD4\uFF0C\u70CF\u9F8D\u9999\u65BC\u5C3E\u6BB5\u6536\u675F\u3002", "\u5FAE\u51B0\u5FAE\u7CD6")
+    ] },
+    { id: "hc10", name: "\u52A0\u6599", items: [
+      hbItem("hi43", "\u767D\u7389", "\u8702\u871C\u9999\u4E2D\u578B\u767D\u8272\u73CD\u73E0\uFF0C\u53E3\u611F\u8EDF\u97CC\u6709\u56BC\u52C1\uFF0C\u539F\u6599\u70BA\u6728\u85AF\u6FB1\u7C89\uFF0C\u5168\u7D20\u98DF\u8005\u53EF\u98DF\u7528\u3002\u6DFB\u52A0\u4E00\u4EFD10\u5143\uFF0C\u4EA6\u6709\u5C11\u767D\u7389\uFF08\u5C1140g\u4F46\u4E0D\u6E1B\u50F9\uFF09\u8207\u591A\u767D\u7389\uFF08\u591A40g\u4F46\u4E0D\u52A0\u50F9\uFF09\u7684\u9078\u9805\uFF0C\u4E5F\u80FD\u518D\u52A0\u50F9\u6210\u96D9\u4EFD\u3002\uFF08\u90E8\u5206\u9580\u5E02\u4E0D\u9069\u75285\u5143\u767D\u7389\uFF09"),
+      hbItem("hi44", "\u6C34\u7389", "\u539F\u5473\u5BD2\u5929\u6676\u7403\uFF0C\u53E3\u611FQ\u5F48\u66F4\u6709\u8106\u5EA6\uFF0C\u539F\u6599\u70BA\u849F\u84BB\u8207\u6D77\u85FB\u81A0\uFF0C\u5168\u7D20\u98DF\u8005\u53EF\u98DF\u7528\u3002\u6DFB\u52A0\u4E00\u4EFD10\u5143\uFF0C\u5206\u91CF\u56FA\u5B9A\uFF0C\u53EF\u518D\u52A0\u50F9\u6210\u96D9\u4EFD\u3002"),
+      hbItem("hi45", "\u58A8\u7389", "\u5149\u6CC9\u5496\u5561\u679C\u51CD\uFF0C\u5168\u7D20\u98DF\u8005\u53EF\u98DF\u7528\u3002\u6DFB\u52A0\u4E00\u4EFD15\u5143\uFF0C\u5206\u91CF\u56FA\u5B9A\uFF0C\u53EF\u518D\u52A0\u50F9\u6210\u96D9\u4EFD\uFF1B\u56E0\u539F\u6599\u542B\u5409\u5229\u4E01\uFF0C\u6545\u7121\u6CD5\u88FD\u4F5C\u6EAB\u3001\u71B1\u98F2\u3002"),
+      hbItem("hi46", "\u6625\u6885\u51CD", "\u624B\u4F5C\u6885\u5B50\u51CD\uFF0C\u539F\u6599\u70BA\u51CD\u7C89\uFF0C\u5168\u7D20\u98DF\u8005\u53EF\u98DF\u7528\u3002\u6DFB\u52A0\u4E00\u4EFD15\u5143\uFF0C\u5206\u91CF\u56FA\u5B9A\uFF0C\u53EF\u518D\u52A0\u50F9\u6210\u96D9\u4EFD\uFF1B\u56E0\u539F\u6599\u542B\u539F\u5473\u51CD\u7C89\uFF0C\u6545\u7121\u6CD5\u88FD\u4F5C\u6EAB\u3001\u71B1\u98F2\u3002"),
+      hbItem("hi47", "\u699B\u679C\u854E\u9EA5\u51CD", "\u624B\u4F5C\u699B\u679C\u98A8\u5473\u854E\u9EA5\u51CD\uFF0C\u539F\u6599\u70BA\u51CD\u7C89\uFF0C\u5168\u7D20\u98DF\u8005\u53EF\u98DF\u7528\u3002\u6DFB\u52A0\u4E00\u4EFD15\u5143\uFF0C\u5206\u91CF\u56FA\u5B9A\uFF0C\u53EF\u518D\u52A0\u50F9\u6210\u96D9\u4EFD\uFF1B\u56E0\u539F\u6599\u542B\u539F\u5473\u51CD\u7C89\uFF0C\u6545\u7121\u6CD5\u88FD\u4F5C\u6EAB\u3001\u71B1\u98F2\u3002")
+    ] }
+  ],
+  // 物料定量：三欄自由填寫；內容一樣的相鄰欄位會自動合併，留空 = 不適用（畫斜線）
+  qtyEntries: [
+    {
+      id: "hq1",
+      name: "\u719F\u6210\u51B7\u9732/\u6625\u82BD\u51B7\u9732/\u80ED\u8102\u51B7\u9732",
+      none: "\u51AC\u74DC\n\u5927\u676F\u7121\u7CD6\uFF1A300 ml\n\u5927\u676F\u6709\u7CD6\uFF1A200 ml\n\u4E2D\u676F\u7121\u7CD6\uFF1A200 ml\n\u4E2D\u676F\u6709\u7CD6\uFF1A100 ml",
+      single: "\u51AC\u74DC\n\u5927\u676F\u7121\u7CD6\uFF1A200 ml\n\u5927\u676F\u6709\u7CD6\uFF1A100 ml\n\u4E2D\u676F\u7121\u7CD6\uFF08\u6216\u5FAE\u7CD60_0\uFF09\uFF1A150 ml\n\u4E2D\u676F\u6709\u7CD6\uFF1A50 ml",
+      double: "\u51AC\u74DC\n\u5927\u676F\u7121\u7CD6\uFF1A200 ml\n\u5927\u676F\u6709\u7CD6\uFF1A100 ml\n\u4E2D\u676F\u7121\u7CD6\uFF08\u6216\u5FAE\u7CD60_0\uFF09\uFF1A150 ml\n\u4E2D\u676F\u6709\u7CD6\uFF1A50 ml"
+    },
+    {
+      id: "hq2",
+      name: "\u719F\u6210\u6B50\u857E/\u91D1\u871C\u6B50\u857E/\u534A\u719F\u70CF\u9F8D\u6B50\u857E",
+      none: "\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml",
+      single: "\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml",
+      double: "\u725B\u5976\n\u5927\u676F\uFF1A150 ml\n\u4E2D\u676F\uFF1A100 ml"
+    },
+    {
+      id: "hq3",
+      name: "\u80ED\u8102\u6B50\u857E",
+      none: "\u6B50\u857E\n\u5927\u676F\uFF1A80 ml\n\u4E2D\u676F\uFF1A50 ml\n\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml",
+      single: "\u6B50\u857E\n\u5927\u676F\uFF1A80 ml\n\u4E2D\u676F\uFF1A50 ml\n\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml",
+      double: "\u6B50\u857E\n\u5927\u676F\uFF1A50 ml\n\u4E2D\u676F\uFF1A30 ml\n\u725B\u5976\n\u5927\u676F\uFF1A150 ml\n\u4E2D\u676F\uFF1A100 ml"
+    },
+    {
+      id: "hq4",
+      name: "\u51B7\u9732\u6B50\u857E",
+      none: "\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml",
+      single: "\u725B\u5976\n\u5927\u676F\uFF1A150 ml\n\u4E2D\u676F\uFF1A100 ml",
+      double: "\u725B\u5976\n\u5927\u676F\uFF1A100 ml\n\u4E2D\u676F\uFF1A50 ml"
+    },
+    {
+      id: "hq5",
+      name: "\u80ED\u8102\u591A\u591A",
+      none: "\u990A\u6A02\u591A\n\u5927\u676F\uFF1A150 ml\n\u4E2D\u676F\uFF1A100 ml",
+      single: "\u990A\u6A02\u591A\n\u5927\u676F\uFF1A150 ml\n\u4E2D\u676F\uFF1A100 ml",
+      double: "\u990A\u6A02\u591A\n\u5927\u676F\uFF1A100 ml\n\u4E2D\u676F\uFF1A50 ml"
+    },
+    {
+      id: "hq6",
+      name: "\u592A\u5983\u719F\u6210",
+      none: "UCC \u5496\u5561\u6DB2\n\u5927\u676F\uFF1A80 ml\n\u4E2D\u676F\uFF1A50 ml",
+      single: "UCC \u5496\u5561\u6DB2\n\u5927\u676F\uFF1A80 ml\n\u4E2D\u676F\uFF1A50 ml",
+      double: "UCC \u5496\u5561\u6DB2\n\u5927\u676F\uFF1A50 ml\n\u4E2D\u676F\uFF1A30 ml"
+    },
+    {
+      id: "hq7",
+      name: "\u6625\u6885\u51B0\u8336",
+      none: "\u6885\u6C41\n\u5927\u676F\uFF1A50 g\n\u4E2D\u676F\uFF1A30 g",
+      single: "\u6885\u6C41\n\u5927\u676F\uFF1A50 g\n\u4E2D\u676F\uFF1A30 g",
+      double: "\u6885\u6C41\n\u5927\u676F\uFF1A35 g\n\u4E2D\u676F\uFF1A20 g"
+    },
+    {
+      id: "hq8",
+      name: "\u719F\u6210\u5976\u8336",
+      none: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A250 ml\n\u4E2D\u676F\uFF1A180 ml",
+      single: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A180 ml\n\u4E2D\u676F\uFF1A120 ml",
+      double: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A160 ml\n\u4E2D\u676F\uFF1A100 ml"
+    },
+    {
+      id: "hq9",
+      name: "\u6625\u82BD\u5976\u8336/\u80ED\u8102\u5976\u8336",
+      none: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A180 ml\n\u4E2D\u676F\uFF1A120 ml",
+      single: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A120 ml\n\u4E2D\u676F\uFF1A100 ml",
+      double: "\u5976\u7CBE\u6C34\n\u5927\u676F\uFF1A100 ml\n\u4E2D\u676F\uFF1A80 ml"
+    },
+    { id: "hq10", name: "\u96EA\u85CF\u7D05\u8336", none: "\u9E97\u6625 100ml", single: "\u9E97\u6625 100ml", double: "" },
+    { id: "hq11", name: "\u96EA\u85CF\u5976\u8336", none: "\u5976\u7CBE\u6C34 180ml", single: "\u5976\u7CBE\u6C34 120ml", double: "" },
+    {
+      id: "hq12",
+      name: "\u719F\u6210\u699B\u679C\u6B50\u857E",
+      none: "\u699B\u679C\u7CD6\u6F3F\n\u5927\u676F\uFF1A23g\n\u4E2D\u676F\uFF1A11.5g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A150ml",
+      single: "\u699B\u679C\u7CD6\u6F3F\n\u5927\u676F\uFF1A23g\n\u4E2D\u676F\uFF1A11.5g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A150ml",
+      double: "\u699B\u679C\u7CD6\u6F3F\n\u5927\u676F\uFF1A11.5g\n\u4E2D\u676F\uFF1A11.5g\n\u9BAE\u5976\n\u5927\u676F\uFF1A150ml\n\u4E2D\u676F\uFF1A100ml"
+    },
+    {
+      id: "hq13",
+      name: "\u9D1B\u9D26\u6B50\u857E",
+      none: "\u5496\u5561\u7CD6\u6F3F\n\u5927\u676F\uFF1A45g\n\u4E2D\u676F\uFF1A35g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A150ml",
+      single: "\u5496\u5561\u7CD6\u6F3F\n\u5927\u676F\uFF1A45g\n\u4E2D\u676F\uFF1A35g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A150ml",
+      double: "\u5496\u5561\u7CD6\u6F3F\n\u5927\u676F\uFF1A35g\n\u4E2D\u676F\uFF1A25g\n\u9BAE\u5976\n\u5927\u676F\uFF1A150ml\n\u4E2D\u676F\uFF1A100ml"
+    },
+    {
+      id: "hq14",
+      name: "\u58A8\u7389\u9D1B\u9D26\u6B50\u857E",
+      none: "",
+      single: "\u5496\u5561\u7CD6\u6F3F\n\u5927\u676F\uFF1A30g\n\u4E2D\u676F\uFF1A20g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A150ml",
+      double: "\u5496\u5561\u7CD6\u6F3F\n\u5927\u676F\uFF1A30g\n\u4E2D\u676F\uFF1A20g\n\u9BAE\u5976\n\u5927\u676F\uFF1A200ml\n\u4E2D\u676F\uFF1A100ml"
+    },
+    {
+      id: "hq15",
+      name: "\u534A\u719F\u70CF\u9F8D\u539A\u4E73/\u8336\u82B1\u70CF\u9F8D\u539A\u4E73/\u751F\u8336\u70CF\u9F8D\u539A\u4E73",
+      none: "\u4E73\u98A8\u5473\u8ABF\u5473\u98F2\u6599\n\u5927\u676F\uFF1A30g\n\u4E2D\u676F\uFF1A25g\n\u9BAE\u5976\n\u5927\u676F\uFF1A140ml\n\u4E2D\u676F\uFF1A80ml",
+      single: "\u4E73\u98A8\u5473\u8ABF\u5473\u98F2\u6599\n\u5927\u676F\uFF1A30g\n\u4E2D\u676F\uFF1A25g\n\u9BAE\u5976\n\u5927\u676F\uFF1A140ml\n\u4E2D\u676F\uFF1A80ml",
+      double: "\u4E73\u98A8\u5473\u8ABF\u5473\u98F2\u6599\n\u5927\u676F\uFF1A25g\n\u4E2D\u676F\uFF1A15g\n\u9BAE\u5976\n\u5927\u676F\uFF1A80ml\n\u4E2D\u676F\uFF1A60ml"
+    }
+  ],
+  qtyExtras: [
+    { id: "hx1", name: "\u91D1\u871C\u6C34", content: "\u5927\u676F\uFF1A60g\uFF08\u5C11\u91D1\u871C 40g\uFF09\n\u4E2D\u676F\uFF1A40g\uFF08\u5C11\u91D1\u871C 30g\uFF09" },
+    { id: "hx2", name: "\u6AB8\u6AAC\u539F\u6C41", content: "\u5927\u676F\uFF1A35g\n\u4E2D\u676F\uFF1A25g" },
+    { id: "hx3", name: "\u767D\u7389", content: "130g\uFF08+9g\uFF09" },
+    { id: "hx4", name: "\u6C34\u7389", content: "70g\uFF08+5g\uFF09" },
+    { id: "hx5", name: "\u96D9\u7389\uFF08\u767D\uFF0B\u6C34\uFF09", content: "200g" },
+    { id: "hx6", name: "\u6625\u6885\u51CD/\u854E\u9EA5\u51CD", content: "100g" }
+  ]
+};
+function normalizeHandbook(h) {
+  const src = h && typeof h === "object" ? h : {};
+  return {
+    categories: Array.isArray(src.categories) ? src.categories : initialHandbook.categories,
+    qtyEntries: Array.isArray(src.qtyEntries) ? src.qtyEntries : initialHandbook.qtyEntries,
+    qtyExtras: Array.isArray(src.qtyExtras) ? src.qtyExtras : initialHandbook.qtyExtras
+  };
+}
 const uid = () => Math.random().toString(36).slice(2, 10);
 const UNIT_OPTIONS = ["\u514B", "\u6BEB\u5347", "\u500B", "\u4EFD", "\u5305", "\u888B", "\u7F50", "\u74F6", "\u689D", "\u652F", "\u9846", "\u6876", "\u758A", "\u7D44"];
 const money = (n) => (Math.round((n || 0) * 100) / 100).toLocaleString("zh-TW", { maximumFractionDigits: 2 });
@@ -305,12 +493,13 @@ function loadInitialData() {
       return {
         materials: parsed.materials || initialMaterials,
         recipes: parsed.recipes || initialRecipes,
-        toppings: parsed.toppings || initialToppings
+        toppings: parsed.toppings || initialToppings,
+        handbook: normalizeHandbook(parsed.handbook)
       };
     }
   } catch (e) {
   }
-  return { materials: initialMaterials, recipes: initialRecipes, toppings: initialToppings };
+  return { materials: initialMaterials, recipes: initialRecipes, toppings: initialToppings, handbook: initialHandbook };
 }
 function useSyncedState(syncCode) {
   const [state, setState] = useState(loadInitialData);
@@ -332,7 +521,8 @@ function useSyncedState(syncCode) {
           setState({
             materials: remote.materials || [],
             recipes: remote.recipes || [],
-            toppings: remote.toppings || []
+            toppings: remote.toppings || [],
+            handbook: normalizeHandbook(remote.handbook)
           });
         } else {
           ref.set(stateRef.current);
@@ -377,6 +567,8 @@ function CostTracker() {
   const setMaterials = (updater) => updateData((prev) => ({ ...prev, materials: typeof updater === "function" ? updater(prev.materials) : updater }));
   const setToppings = (updater) => updateData((prev) => ({ ...prev, toppings: typeof updater === "function" ? updater(prev.toppings) : updater }));
   const setRecipes = (updater) => updateData((prev) => ({ ...prev, recipes: typeof updater === "function" ? updater(prev.recipes) : updater }));
+  const handbook = data.handbook;
+  const setHandbook = (updater) => updateData((prev) => ({ ...prev, handbook: typeof updater === "function" ? updater(prev.handbook) : updater }));
   const recipeCost = (r) => r.ingredients.reduce((sum, ing) => {
     const info = getIngredientInfo(ing, materials, toppings);
     return sum + info.cost * ing.qty;
@@ -385,12 +577,13 @@ function CostTracker() {
     { id: "overview", label: "\u7E3D\u89BD", icon: BarChart3 },
     { id: "materials", label: "\u7269\u6599\u6210\u672C", icon: Package },
     { id: "toppings", label: "\u52A0\u6599", icon: Droplet },
-    { id: "recipes", label: "\u914D\u65B9\u6210\u672C", icon: Coffee }
+    { id: "recipes", label: "\u914D\u65B9\u6210\u672C", icon: Coffee },
+    { id: "handbook", label: "\u624B\u518A", icon: BookOpen }
   ];
-  return /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(
     "div",
     {
-      className: "h-screen bg-stone-200 flex justify-center px-3 py-6 overflow-hidden",
+      className: "screen-only h-screen bg-stone-200 flex justify-center px-3 py-6 overflow-hidden",
       style: { height: "100dvh" }
     },
     /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-md flex flex-col min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "bg-stone-50 rounded-t-sm shadow-lg overflow-hidden flex flex-col flex-1 min-h-0" }, /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, null)), /* @__PURE__ */ React.createElement("header", { className: "px-5 pt-1 pb-4 text-center shrink-0" }, /* @__PURE__ */ React.createElement("p", { className: "text-xs tracking-widest text-stone-500 font-mono mt-2" }, "MATERIAL COST LEDGER"), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-black text-stone-800 tracking-tight mt-1" }, "\u7269\u6599\u6210\u672C"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1 font-mono" }, "\u54C1\u9805 ", materials.filter((m) => !m.archived).length, " \xB7 \u52A0\u6599 ", toppings.length + materials.filter((m) => m.isTopping && !m.archived).length, " \xB7 \u914D\u65B9 ", recipes.length), /* @__PURE__ */ React.createElement(
@@ -410,7 +603,7 @@ function CostTracker() {
         setRecipes,
         recipeCost
       }
-    )), /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, { flip: true }))), /* @__PURE__ */ React.createElement("nav", { className: "mt-3 shrink-0 bg-teal-800 rounded-lg shadow-lg flex overflow-hidden" }, tabs.map((t) => {
+    ), tab === "handbook" && /* @__PURE__ */ React.createElement(Handbook, { handbook, setHandbook })), /* @__PURE__ */ React.createElement("div", { className: "shrink-0" }, /* @__PURE__ */ React.createElement(PerfEdge, { flip: true }))), /* @__PURE__ */ React.createElement("nav", { className: "mt-3 shrink-0 bg-teal-800 rounded-lg shadow-lg flex overflow-hidden" }, tabs.map((t) => {
       const Icon = t.icon;
       const active = tab === t.id;
       return /* @__PURE__ */ React.createElement(
@@ -418,18 +611,18 @@ function CostTracker() {
         {
           key: t.id,
           onClick: () => setTab(t.id),
-          className: `flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-medium transition-colors ${active ? "bg-teal-900 text-amber-300" : "text-teal-100"}`
+          className: `flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 text-xs font-medium whitespace-nowrap transition-colors ${active ? "bg-teal-900 text-amber-300" : "text-teal-100"}`
         },
         /* @__PURE__ */ React.createElement(Icon, { size: 18, strokeWidth: active ? 2.4 : 1.8 }),
         t.label
       );
     }))),
     syncModalOpen && /* @__PURE__ */ React.createElement(SyncModal, { onClose: () => setSyncModalOpen(false), syncCode, setSyncCode, dbReady })
-  );
+  ), /* @__PURE__ */ React.createElement(HandbookPrint, { handbook }), /* @__PURE__ */ React.createElement(PrintStyles, null));
 }
 function SyncModal({ onClose, syncCode, setSyncCode, dbReady: dbReady2 }) {
   const [input, setInput] = useState(syncCode);
-  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: "\u96F2\u7AEF\u540C\u6B65\u8A2D\u5B9A" }, !dbReady2 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 mb-3 text-xs text-amber-800 leading-relaxed" }, "Firebase \u6C92\u6709\u9023\u4E0A\uFF0C\u76EE\u524D\u53EA\u6703\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mb-3 leading-relaxed" }, "\u8F38\u5165\u4E00\u7D44\u4EE3\u78BC\uFF0C\u5728\u5176\u4ED6\u88DD\u7F6E\u6253\u958B\u9019\u500B\u7DB2\u5740\u3001\u8F38\u5165\u540C\u4E00\u7D44\u4EE3\u78BC\uFF0C\u7269\u6599\u3001\u52A0\u6599\u548C\u914D\u65B9\u8CC7\u6599\u5C31\u6703\u540C\u6B65\u3002\u7559\u7A7A\u8868\u793A\u53EA\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement(Field, { label: "\u540C\u6B65\u4EE3\u78BC" }, /* @__PURE__ */ React.createElement("input", { value: input, onChange: (e) => setInput(e.target.value), placeholder: "\u4F8B\u5982\uFF1AtaoyuanTL01", className: "input" })), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: "\u96F2\u7AEF\u540C\u6B65\u8A2D\u5B9A" }, !dbReady2 && /* @__PURE__ */ React.createElement("div", { className: "bg-amber-50 border border-amber-300 rounded-md px-3 py-2 mb-3 text-xs text-amber-800 leading-relaxed" }, "Firebase \u6C92\u6709\u9023\u4E0A\uFF0C\u76EE\u524D\u53EA\u6703\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mb-3 leading-relaxed" }, "\u8F38\u5165\u4E00\u7D44\u4EE3\u78BC\uFF0C\u5728\u5176\u4ED6\u88DD\u7F6E\u6253\u958B\u9019\u500B\u7DB2\u5740\u3001\u8F38\u5165\u540C\u4E00\u7D44\u4EE3\u78BC\uFF0C\u7269\u6599\u3001\u52A0\u6599\u3001\u914D\u65B9\u548C\u624B\u518A\u8CC7\u6599\u5C31\u6703\u540C\u6B65\u3002\u7559\u7A7A\u8868\u793A\u53EA\u5B58\u5728\u9019\u53F0\u88DD\u7F6E\u3002"), /* @__PURE__ */ React.createElement(Field, { label: "\u540C\u6B65\u4EE3\u78BC" }, /* @__PURE__ */ React.createElement("input", { value: input, onChange: (e) => setInput(e.target.value), placeholder: "\u4F8B\u5982\uFF1AtaoyuanTL01", className: "input" })), /* @__PURE__ */ React.createElement("button", { onClick: () => {
     setSyncCode(input.trim());
     onClose();
   }, className: "save-btn" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " ", input.trim() ? "\u9023\u63A5\u540C\u6B65" : "\u6539\u70BA\u50C5\u672C\u6A5F\u5132\u5B58"));
@@ -1174,6 +1367,480 @@ function RecipeDetailModal({ recipe, materials, toppings, recipeCost, onClose, o
     const lineCost = ing.qty * info.cost;
     return /* @__PURE__ */ React.createElement("div", { key: idx, className: "flex items-center justify-between text-sm bg-white border border-stone-200 rounded-md px-3 py-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-700 truncate" }, info.name, " \xB7 ", ing.qty, info.unit, ing.kind === "topping" && /* @__PURE__ */ React.createElement("span", { className: "text-teal-600" }, " \xB7\u52A0\u6599")), /* @__PURE__ */ React.createElement("span", { className: "font-mono text-stone-800 shrink-0 ml-2" }, "$", money(lineCost)));
   })), /* @__PURE__ */ React.createElement(Dashed, null), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u7E3D\u6210\u672C"), /* @__PURE__ */ React.createElement(Money, { value: cost, className: "text-stone-800 font-semibold" })), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u552E\u50F9"), /* @__PURE__ */ React.createElement(Money, { value: recipe.sellPrice, className: "text-stone-800 font-semibold" })), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-sm mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-stone-500" }, "\u6BDB\u5229\u7387"), /* @__PURE__ */ React.createElement("span", { className: `font-mono font-semibold ${rate < 40 ? "text-rose-600" : "text-teal-700"}` }, rate.toFixed(1), "%")), /* @__PURE__ */ React.createElement("button", { onClick: onEdit, className: "save-btn" }, /* @__PURE__ */ React.createElement(Pencil, { size: 16 }), " \u7DE8\u8F2F\u914D\u65B9"));
+}
+const QTY_COLS = [
+  { key: "none", label: "\u4E0D\u52A0\u914D\u6599" },
+  { key: "single", label: "\u55AE\u4EFD\u914D\u6599" },
+  { key: "double", label: "\u96D9\u4EFD\u914D\u6599" }
+];
+const stripMarks = (t) => String(t || "").replace(/[【】]/g, "");
+function Highlighted({ text, className }) {
+  const parts = String(text || "").split(/(【[^【】]*】)/g);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, parts.map(
+    (p, i) => p.length >= 2 && p[0] === "\u3010" && p[p.length - 1] === "\u3011" ? /* @__PURE__ */ React.createElement("span", { key: i, className }, p.slice(1, -1)) : /* @__PURE__ */ React.createElement("span", { key: i }, p)
+  ));
+}
+function RecText({ rec, mainClass }) {
+  const m = String(rec || "").match(/^([^（(]*)([\s\S]*)$/);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("span", { className: mainClass }, m[1]), m[2] ? /* @__PURE__ */ React.createElement("span", null, m[2]) : null);
+}
+function qtyCells(entry) {
+  const cells = [];
+  QTY_COLS.forEach((c) => {
+    const text = String(entry[c.key] || "").trim();
+    const last = cells[cells.length - 1];
+    if (last && last.text === text) {
+      last.span += 1;
+      last.labels.push(c.label);
+    } else {
+      cells.push({ text, span: 1, labels: [c.label] });
+    }
+  });
+  return cells;
+}
+function QtyLines({ text, labelClass }) {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, String(text || "").split("\n").map((line, i) => {
+    const isLabel = line.trim() !== "" && !/[：:]/.test(line);
+    return /* @__PURE__ */ React.createElement("div", { key: i, className: isLabel ? labelClass : void 0 }, line.trim() === "" ? "\xA0" : line.replace(/(\d)\s+(?=[A-Za-z])/g, "$1\xA0"));
+  }));
+}
+function DiagonalLine({ color = "#a8a29e" }) {
+  return /* @__PURE__ */ React.createElement(
+    "svg",
+    {
+      viewBox: "0 0 100 100",
+      preserveAspectRatio: "none",
+      "aria-hidden": "true",
+      style: { position: "absolute", left: 0, top: 0, width: "100%", height: "100%" }
+    },
+    /* @__PURE__ */ React.createElement("line", { x1: "0", y1: "0", x2: "100", y2: "100", stroke: color, strokeWidth: "1", vectorEffect: "non-scaling-stroke" })
+  );
+}
+const moveInArray = (arr, index, dir) => {
+  const j = index + dir;
+  if (j < 0 || j >= arr.length) return arr;
+  const next = [...arr];
+  [next[index], next[j]] = [next[j], next[index]];
+  return next;
+};
+function ReorderButtons({ onUp, onDown, disableUp, disableDown, row }) {
+  return /* @__PURE__ */ React.createElement("span", { className: `flex ${row ? "flex-row" : "flex-col"} shrink-0`, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("button", { type: "button", "aria-label": "\u5F80\u4E0A\u79FB", disabled: disableUp, onClick: onUp, className: "p-1 text-stone-400 hover:text-teal-700 disabled:opacity-20" }, /* @__PURE__ */ React.createElement(ChevronUp, { size: 16 })), /* @__PURE__ */ React.createElement("button", { type: "button", "aria-label": "\u5F80\u4E0B\u79FB", disabled: disableDown, onClick: onDown, className: "p-1 text-stone-400 hover:text-teal-700 disabled:opacity-20" }, /* @__PURE__ */ React.createElement(ChevronDown, { size: 16 })));
+}
+function printHandbook(target, label) {
+  const d = /* @__PURE__ */ new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const prevTitle = document.title;
+  document.body.setAttribute("data-print", target);
+  document.title = `${label}_${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const restore = () => {
+    document.title = prevTitle;
+    document.body.removeAttribute("data-print");
+    window.removeEventListener("afterprint", restore);
+  };
+  window.addEventListener("afterprint", restore);
+  try {
+    window.print();
+  } catch (e) {
+    restore();
+    alert("\u9019\u500B\u700F\u89BD\u5668\u4E0D\u80FD\u5217\u5370\uFF0C\u8ACB\u6539\u7528 Chrome \u6216 Safari \u6253\u958B\u7DB2\u9801\u7248");
+  }
+}
+function Handbook({ handbook, setHandbook }) {
+  const [section, setSection] = useState("intro");
+  const [editMode, setEditMode] = useState(false);
+  const [search, setSearch] = useState("");
+  const [modal, setModal] = useState(null);
+  const q = search.trim().toLowerCase();
+  const canReorder = editMode && !q;
+  const has = (...texts) => texts.some((t) => stripMarks(t).toLowerCase().includes(q));
+  const setField = (field, updater) => setHandbook((prev) => ({ ...prev, [field]: updater(prev[field]) }));
+  const visibleCats = handbook.categories.map((c, index) => {
+    const catMatch = !!q && has(c.name);
+    const shown = !q || catMatch ? c.items : c.items.filter((it) => has(it.name, it.desc, it.rec));
+    return { ...c, index, shown, catMatch };
+  }).filter((c) => !q || c.catMatch || c.shown.length > 0);
+  const saveCategory = (id, name) => setField(
+    "categories",
+    (cats) => id === "new" ? [...cats, { id: uid(), name, items: [] }] : cats.map((c) => c.id === id ? { ...c, name } : c)
+  );
+  const deleteCategory = (id) => setField("categories", (cats) => cats.filter((c) => c.id !== id));
+  const saveItem = (id, fromCatId, data) => setField("categories", (cats) => {
+    const item = { name: data.name, desc: data.desc, rec: data.rec };
+    if (id === "new") {
+      return cats.map((c) => c.id === data.categoryId ? { ...c, items: [...c.items, { id: uid(), ...item }] } : c);
+    }
+    if (fromCatId === data.categoryId) {
+      return cats.map(
+        (c) => c.id === fromCatId ? { ...c, items: c.items.map((it) => it.id === id ? { ...it, ...item } : it) } : c
+      );
+    }
+    return cats.map((c) => {
+      if (c.id === fromCatId) return { ...c, items: c.items.filter((it) => it.id !== id) };
+      if (c.id === data.categoryId) return { ...c, items: [...c.items, { id, ...item }] };
+      return c;
+    });
+  });
+  const deleteItem = (catId, id) => setField("categories", (cats) => cats.map((c) => c.id === catId ? { ...c, items: c.items.filter((it) => it.id !== id) } : c));
+  const moveItem = (catId, index, dir) => setField("categories", (cats) => cats.map((c) => c.id === catId ? { ...c, items: moveInArray(c.items, index, dir) } : c));
+  const visibleEntries = handbook.qtyEntries.map((e, index) => ({ ...e, index })).filter((e) => !q || has(e.name, e.none, e.single, e.double));
+  const visibleExtras = handbook.qtyExtras.map((x, index) => ({ ...x, index })).filter((x) => !q || has(x.name, x.content));
+  const saveRow = (field, id, data) => setField(field, (rows) => id === "new" ? [...rows, { id: uid(), ...data }] : rows.map((r) => r.id === id ? { ...r, ...data } : r));
+  const deleteRow = (field, id) => setField(field, (rows) => rows.filter((r) => r.id !== id));
+  const moveRow = (field, index, dir) => setField(field, (rows) => moveInArray(rows, index, dir));
+  const tapProps = (onOpen) => editMode ? { onClick: onOpen, className: "cursor-pointer hover:bg-stone-50 active:bg-stone-100" } : { className: "" };
+  const nothingFound = q && (section === "intro" ? visibleCats.length === 0 : visibleEntries.length === 0 && visibleExtras.length === 0);
+  return /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex-1 min-h-0 flex flex-col" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mb-2 shrink-0" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-1 min-w-0 rounded-md border border-stone-300 overflow-hidden" }, [
+    { id: "intro", label: "\u98F2\u54C1\u4ECB\u7D39" },
+    { id: "qty", label: "\u7269\u6599\u5B9A\u91CF" }
+  ].map((s) => /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      key: s.id,
+      type: "button",
+      onClick: () => setSection(s.id),
+      className: `flex-1 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${section === s.id ? "bg-teal-700 text-white" : "bg-white text-stone-600"}`
+    },
+    s.label
+  ))), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setEditMode((v) => !v),
+      className: `flex items-center gap-1 text-xs font-medium px-2 py-1.5 rounded-md whitespace-nowrap ${editMode ? "bg-teal-700 text-white" : "text-teal-700 hover:bg-emerald-50"}`
+    },
+    editMode ? /* @__PURE__ */ React.createElement(Check, { size: 14 }) : /* @__PURE__ */ React.createElement(Pencil, { size: 14 }),
+    " ",
+    editMode ? "\u5B8C\u6210" : "\u7DE8\u8F2F"
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => section === "intro" ? printHandbook("intro", "\u98F2\u54C1\u4ECB\u7D39") : printHandbook("qty", "\u7269\u6599\u5B9A\u91CF"),
+      className: "flex items-center gap-1 text-xs font-medium text-teal-700 px-2 py-1.5 rounded-md hover:bg-emerald-50 whitespace-nowrap"
+    },
+    /* @__PURE__ */ React.createElement(Printer, { size: 14 }),
+    " \u532F\u51FAPDF"
+  )), /* @__PURE__ */ React.createElement("div", { className: "relative mb-2 shrink-0" }, /* @__PURE__ */ React.createElement(Search, { size: 14, className: "absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" }), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: search,
+      onChange: (e) => setSearch(e.target.value),
+      placeholder: section === "intro" ? "\u641C\u5C0B\u98F2\u54C1\u6216\u4ECB\u7D39\u5167\u5BB9" : "\u641C\u5C0B\u98F2\u54C1\u6216\u7269\u6599\uFF08\u4F8B\u5982\uFF1A\u5976\u7CBE\u6C34\uFF09",
+      className: "w-full bg-white border border-stone-300 rounded-md pl-8 pr-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-700"
+    }
+  )), editMode && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-teal-800 bg-teal-50 border border-teal-200 rounded-md px-3 py-1.5 mb-2 shrink-0" }, q ? "\u7DE8\u8F2F\u4E2D\uFF1A\u9EDE\u9805\u76EE\u4FEE\u6539\uFF08\u641C\u5C0B\u6642\u4E0D\u80FD\u8ABF\u6574\u9806\u5E8F\uFF09" : "\u7DE8\u8F2F\u4E2D\uFF1A\u9EDE\u9805\u76EE\u4FEE\u6539\uFF0C\u7BAD\u982D\u8ABF\u6574\u9806\u5E8F"), section === "qty" && visibleEntries.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-1.5 px-3 pb-1 text-xs font-medium text-stone-500 shrink-0" }, QTY_COLS.map((c) => /* @__PURE__ */ React.createElement("span", { key: c.key }, c.label))), /* @__PURE__ */ React.createElement("div", { key: section, className: "flex-1 min-h-0 overflow-y-auto pb-1" }, section === "intro" && /* @__PURE__ */ React.createElement(React.Fragment, null, visibleCats.map((c) => /* @__PURE__ */ React.createElement("div", { key: c.id, className: "mb-3" }, /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      onClick: editMode ? () => setModal({ type: "category", id: c.id }) : void 0,
+      className: `flex items-center gap-2 px-1 mb-1.5 ${editMode ? "cursor-pointer" : ""}`
+    },
+    /* @__PURE__ */ React.createElement("span", { className: "text-sm font-bold text-stone-600" }, c.name),
+    editMode && /* @__PURE__ */ React.createElement(Pencil, { size: 12, className: "text-stone-400 shrink-0" }),
+    /* @__PURE__ */ React.createElement("span", { className: "flex-1 border-t border-dashed border-stone-300" }),
+    canReorder && /* @__PURE__ */ React.createElement(
+      ReorderButtons,
+      {
+        row: true,
+        disableUp: c.index === 0,
+        disableDown: c.index === handbook.categories.length - 1,
+        onUp: () => setField("categories", (cats) => moveInArray(cats, c.index, -1)),
+        onDown: () => setField("categories", (cats) => moveInArray(cats, c.index, 1))
+      }
+    )
+  ), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-200" }, c.shown.map((it) => {
+    const index = c.items.findIndex((x) => x.id === it.id);
+    const tp = tapProps(() => setModal({ type: "item", id: it.id, categoryId: c.id }));
+    return /* @__PURE__ */ React.createElement("div", { key: it.id, onClick: tp.onClick, className: `px-3 py-2.5 flex gap-2 ${tp.className}` }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0 flex-1" }, /* @__PURE__ */ React.createElement("p", { className: "text-sm font-semibold text-stone-800" }, it.name), it.desc && /* @__PURE__ */ React.createElement("p", { className: "text-sm text-stone-600 leading-relaxed mt-0.5" }, /* @__PURE__ */ React.createElement(Highlighted, { text: it.desc, className: "text-teal-700 font-semibold" })), it.rec && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-500 mt-1" }, "\u63A8\u85A6 ", /* @__PURE__ */ React.createElement(RecText, { rec: it.rec, mainClass: "text-rose-600 font-semibold" }))), canReorder && /* @__PURE__ */ React.createElement(
+      ReorderButtons,
+      {
+        disableUp: index === 0,
+        disableDown: index === c.items.length - 1,
+        onUp: () => moveItem(c.id, index, -1),
+        onDown: () => moveItem(c.id, index, 1)
+      }
+    ));
+  }), c.shown.length === 0 && !editMode && /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 px-3 py-3" }, "\u9019\u500B\u7CFB\u5217\u9084\u6C92\u6709\u98F2\u54C1"), editMode && !q && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setModal({ type: "item", id: "new", categoryId: c.id }),
+      className: "w-full flex items-center justify-center gap-1 text-xs font-medium text-teal-700 py-2.5 hover:bg-emerald-50"
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
+    " \u5728\u300C",
+    c.name,
+    "\u300D\u65B0\u589E"
+  )))), editMode && !q && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setModal({ type: "category", id: "new" }),
+      className: "w-full flex items-center justify-center gap-1 text-xs font-medium text-teal-700 border border-dashed border-teal-300 rounded-md py-2.5 hover:bg-teal-50"
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
+    " \u65B0\u589E\u7CFB\u5217"
+  ), handbook.categories.length === 0 && !editMode && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u9084\u6C92\u6709\u5167\u5BB9\uFF0C\u6309\u53F3\u4E0A\u89D2\u300C\u7DE8\u8F2F\u300D\u958B\u59CB\u65B0\u589E")), section === "qty" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, visibleEntries.map((e) => {
+    const tp = tapProps(() => setModal({ type: "entry", id: e.id }));
+    return /* @__PURE__ */ React.createElement("div", { key: e.id, onClick: tp.onClick, className: `bg-white rounded-md px-3 py-2.5 ${tp.className}` }, /* @__PURE__ */ React.createElement("div", { className: "flex items-start gap-2" }, /* @__PURE__ */ React.createElement("p", { className: "flex-1 min-w-0 text-sm font-semibold text-stone-800" }, e.name), canReorder && /* @__PURE__ */ React.createElement(
+      ReorderButtons,
+      {
+        row: true,
+        disableUp: e.index === 0,
+        disableDown: e.index === handbook.qtyEntries.length - 1,
+        onUp: () => moveRow("qtyEntries", e.index, -1),
+        onDown: () => moveRow("qtyEntries", e.index, 1)
+      }
+    )), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-1.5 mt-1.5" }, qtyCells(e).map((cell, i) => /* @__PURE__ */ React.createElement(
+      "div",
+      {
+        key: i,
+        className: "relative rounded bg-stone-50 border border-stone-200 px-1.5 py-1 text-xs leading-relaxed text-stone-700 break-words",
+        style: { gridColumn: `span ${cell.span} / span ${cell.span}`, minHeight: "2rem" }
+      },
+      cell.text ? /* @__PURE__ */ React.createElement(QtyLines, { text: cell.text, labelClass: "font-semibold text-stone-800" }) : /* @__PURE__ */ React.createElement(DiagonalLine, null)
+    ))));
+  }), editMode && !q && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setModal({ type: "entry", id: "new" }),
+      className: "w-full flex items-center justify-center gap-1 text-xs font-medium text-teal-700 border border-dashed border-teal-300 rounded-md py-2.5 hover:bg-teal-50"
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
+    " \u65B0\u589E\u98F2\u54C1\u5B9A\u91CF"
+  )), (visibleExtras.length > 0 || editMode) && /* @__PURE__ */ React.createElement("div", { className: "mt-4" }, /* @__PURE__ */ React.createElement("p", { className: "text-sm font-bold text-stone-600 px-1 mb-1.5" }, "\u5176\u4ED6\u5B9A\u91CF"), /* @__PURE__ */ React.createElement("div", { className: "bg-white rounded-md divide-y divide-dashed divide-stone-200" }, visibleExtras.map((x) => {
+    const tp = tapProps(() => setModal({ type: "extra", id: x.id }));
+    return /* @__PURE__ */ React.createElement("div", { key: x.id, onClick: tp.onClick, className: `px-3 py-2 flex items-start gap-2 text-sm ${tp.className}` }, /* @__PURE__ */ React.createElement("span", { className: "font-semibold text-stone-800 shrink-0", style: { width: "6.5rem" } }, x.name), /* @__PURE__ */ React.createElement("span", { className: "flex-1 min-w-0 text-stone-700 whitespace-pre-line" }, x.content), canReorder && /* @__PURE__ */ React.createElement(
+      ReorderButtons,
+      {
+        disableUp: x.index === 0,
+        disableDown: x.index === handbook.qtyExtras.length - 1,
+        onUp: () => moveRow("qtyExtras", x.index, -1),
+        onDown: () => moveRow("qtyExtras", x.index, 1)
+      }
+    ));
+  }), editMode && !q && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setModal({ type: "extra", id: "new" }),
+      className: "w-full flex items-center justify-center gap-1 text-xs font-medium text-teal-700 py-2.5 hover:bg-emerald-50"
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 13 }),
+    " \u65B0\u589E\u5176\u4ED6\u5B9A\u91CF"
+  ))), handbook.qtyEntries.length === 0 && handbook.qtyExtras.length === 0 && !editMode && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u9084\u6C92\u6709\u5167\u5BB9\uFF0C\u6309\u53F3\u4E0A\u89D2\u300C\u7DE8\u8F2F\u300D\u958B\u59CB\u65B0\u589E")), nothingFound && /* @__PURE__ */ React.createElement("p", { className: "text-center text-xs text-stone-400 py-6" }, "\u627E\u4E0D\u5230\u7B26\u5408\u300C", search, "\u300D\u7684\u5167\u5BB9")), modal && modal.type === "category" && (() => {
+    const cat = handbook.categories.find((c) => c.id === modal.id);
+    return /* @__PURE__ */ React.createElement(
+      HbCategoryModal,
+      {
+        category: cat,
+        onClose: () => setModal(null),
+        onSave: (name) => {
+          saveCategory(modal.id, name);
+          setModal(null);
+        },
+        onDelete: cat ? () => {
+          deleteCategory(cat.id);
+          setModal(null);
+        } : void 0
+      }
+    );
+  })(), modal && modal.type === "item" && (() => {
+    const cat = handbook.categories.find((c) => c.id === modal.categoryId);
+    const item = cat && modal.id !== "new" ? cat.items.find((it) => it.id === modal.id) : null;
+    return /* @__PURE__ */ React.createElement(
+      HbItemModal,
+      {
+        item,
+        categories: handbook.categories,
+        categoryId: modal.categoryId,
+        onClose: () => setModal(null),
+        onSave: (data) => {
+          saveItem(modal.id, modal.categoryId, data);
+          setModal(null);
+        },
+        onDelete: item ? () => {
+          deleteItem(modal.categoryId, item.id);
+          setModal(null);
+        } : void 0
+      }
+    );
+  })(), modal && modal.type === "entry" && (() => {
+    const entry = handbook.qtyEntries.find((e) => e.id === modal.id);
+    return /* @__PURE__ */ React.createElement(
+      HbEntryModal,
+      {
+        entry,
+        onClose: () => setModal(null),
+        onSave: (data) => {
+          saveRow("qtyEntries", modal.id, data);
+          setModal(null);
+        },
+        onDelete: entry ? () => {
+          deleteRow("qtyEntries", entry.id);
+          setModal(null);
+        } : void 0
+      }
+    );
+  })(), modal && modal.type === "extra" && (() => {
+    const extra = handbook.qtyExtras.find((x) => x.id === modal.id);
+    return /* @__PURE__ */ React.createElement(
+      HbExtraModal,
+      {
+        extra,
+        onClose: () => setModal(null),
+        onSave: (data) => {
+          saveRow("qtyExtras", modal.id, data);
+          setModal(null);
+        },
+        onDelete: extra ? () => {
+          deleteRow("qtyExtras", extra.id);
+          setModal(null);
+        } : void 0
+      }
+    );
+  })());
+}
+function HbCategoryModal({ category, onSave, onDelete, onClose }) {
+  const [name, setName] = useState(category ? category.name : "");
+  return /* @__PURE__ */ React.createElement(
+    Modal,
+    {
+      onClose,
+      title: category ? "\u7DE8\u8F2F\u7CFB\u5217" : "\u65B0\u589E\u7CFB\u5217",
+      onDelete,
+      deleteLabel: category ? `${category.name}\uFF08\u542B ${category.items.length} \u500B\u9805\u76EE\uFF09` : ""
+    },
+    /* @__PURE__ */ React.createElement(Field, { label: "\u7CFB\u5217\u540D\u7A31" }, /* @__PURE__ */ React.createElement("input", { value: name, onChange: (e) => setName(e.target.value), placeholder: "\u4F8B\u5982\uFF1A\u6B50\u857E", className: "input" })),
+    /* @__PURE__ */ React.createElement("button", { onClick: () => name.trim() && onSave(name.trim()), disabled: !name.trim(), className: "save-btn disabled:opacity-40" }, /* @__PURE__ */ React.createElement(Check, { size: 16 }), " \u5132\u5B58")
+  );
+}
+function HbItemModal({ item, categories, categoryId, onSave, onDelete, onClose }) {
+  const [form, setForm] = useState({
+    categoryId,
+    name: item ? item.name : "",
+    desc: item ? item.desc : "",
+    rec: item ? item.rec : ""
+  });
+  const ok = form.name.trim() !== "";
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: item ? "\u7DE8\u8F2F\u98F2\u54C1\u4ECB\u7D39" : "\u65B0\u589E\u98F2\u54C1\u4ECB\u7D39", onDelete, deleteLabel: form.name }, /* @__PURE__ */ React.createElement(Field, { label: "\u7CFB\u5217" }, /* @__PURE__ */ React.createElement("select", { value: form.categoryId, onChange: (e) => setForm({ ...form, categoryId: e.target.value }), className: "input" }, categories.map((c) => /* @__PURE__ */ React.createElement("option", { key: c.id, value: c.id }, c.name)))), /* @__PURE__ */ React.createElement(Field, { label: "\u54C1\u540D" }, /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u719F\u6210\u7D05\u8336", className: "input" })), /* @__PURE__ */ React.createElement(Field, { label: "\u4ECB\u7D39" }, /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      rows: 5,
+      value: form.desc,
+      onChange: (e) => setForm({ ...form, desc: e.target.value }),
+      placeholder: "\u4F8B\u5982\uFF1A\u62DB\u724C\u719F\u6210\u7D05\u8336\u52A0\u4E0A\u9F8D\u773C\u871C\uFF0C\u70BA\u3010\u8702\u871C\u7D05\u8336\u3011\u2026",
+      className: "input leading-relaxed"
+    }
+  )), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-2 mb-2 leading-relaxed" }, "\u7528\u3010\u3011\u6846\u8D77\u4F86\u7684\u5B57\u6703\u8B8A\u6210\u7DA0\u8272\u91CD\u9EDE\uFF0C\u4F8B\u5982\uFF1A\u70BA\u3010\u8702\u871C\u7D05\u8336\u3011"), form.desc.includes("\u3010") && /* @__PURE__ */ React.createElement("div", { className: "text-sm text-stone-600 bg-white border border-stone-200 rounded-md px-3 py-2 mb-3 leading-relaxed" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-400 mr-1" }, "\u9810\u89BD"), /* @__PURE__ */ React.createElement(Highlighted, { text: form.desc, className: "text-teal-700 font-semibold" })), /* @__PURE__ */ React.createElement(Field, { label: "\u63A8\u85A6\uFF08\u9078\u586B\uFF0C\u52A0\u6599\u9019\u985E\u6C92\u6709\u63A8\u85A6\u7684\u53EF\u4EE5\u7559\u7A7A\uFF09" }, /* @__PURE__ */ React.createElement("input", { value: form.rec, onChange: (e) => setForm({ ...form, rec: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u5FAE\u51B0\u7121\u7CD6\uFF08\u8702\u871C\u751C\uFF09", className: "input" })), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => ok && onSave({ categoryId: form.categoryId, name: form.name.trim(), desc: form.desc.trim(), rec: form.rec.trim() }),
+      disabled: !ok,
+      className: "save-btn disabled:opacity-40"
+    },
+    /* @__PURE__ */ React.createElement(Check, { size: 16 }),
+    " \u5132\u5B58"
+  ));
+}
+function HbEntryModal({ entry, onSave, onDelete, onClose }) {
+  const [form, setForm] = useState({
+    name: entry ? entry.name : "",
+    none: entry ? entry.none : "",
+    single: entry ? entry.single : "",
+    double: entry ? entry.double : ""
+  });
+  const ok = form.name.trim() !== "";
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: entry ? "\u7DE8\u8F2F\u98F2\u54C1\u5B9A\u91CF" : "\u65B0\u589E\u98F2\u54C1\u5B9A\u91CF", onDelete, deleteLabel: form.name }, /* @__PURE__ */ React.createElement(Field, { label: "\u54C1\u540D\uFF08\u591A\u6B3E\u5B9A\u91CF\u4E00\u6A23\u53EF\u4EE5\u7528 / \u5206\u958B\uFF09" }, /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u719F\u6210\u51B7\u9732/\u6625\u82BD\u51B7\u9732", className: "input" })), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-stone-400 -mt-1 mb-3 leading-relaxed" }, "\u6BCF\u683C\u81EA\u7531\u586B\u5BEB\uFF0C\u4E00\u884C\u4E00\u500B\u3002\u6C92\u6709\u5192\u865F\u7684\u884C\uFF08\u4F8B\u5982\u300C\u725B\u5976\u300D\uFF09\u6703\u81EA\u52D5\u52A0\u7C97\u3002", /* @__PURE__ */ React.createElement("br", null), "\u7559\u7A7A = \u4E0D\u9069\u7528\uFF08\u756B\u659C\u7DDA\uFF09\uFF1B\u8DDF\u5DE6\u908A\u4E00\u683C\u5167\u5BB9\u4E00\u6A23\u6703\u81EA\u52D5\u5408\u4F75\u3002"), QTY_COLS.map((c, i) => /* @__PURE__ */ React.createElement("div", { key: c.key, className: "mb-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs text-stone-500" }, c.label, "\u5B9A\u91CF"), i > 0 && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setForm({ ...form, [c.key]: form[QTY_COLS[i - 1].key] }),
+      className: "text-xs text-teal-700 font-medium"
+    },
+    "\u540C\u5DE6\uFF08\u8907\u88FD",
+    QTY_COLS[i - 1].label,
+    "\uFF09"
+  )), /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      rows: 4,
+      value: form[c.key],
+      onChange: (e) => setForm({ ...form, [c.key]: e.target.value }),
+      placeholder: i === 0 ? "\u725B\u5976\n\u5927\u676F\uFF1A200 ml\n\u4E2D\u676F\uFF1A150 ml" : "\u7559\u7A7A = \u4E0D\u9069\u7528",
+      className: "input leading-relaxed"
+    }
+  ))), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => ok && onSave({ name: form.name.trim(), none: form.none.trim(), single: form.single.trim(), double: form.double.trim() }),
+      disabled: !ok,
+      className: "save-btn disabled:opacity-40"
+    },
+    /* @__PURE__ */ React.createElement(Check, { size: 16 }),
+    " \u5132\u5B58"
+  ));
+}
+function HbExtraModal({ extra, onSave, onDelete, onClose }) {
+  const [form, setForm] = useState({ name: extra ? extra.name : "", content: extra ? extra.content : "" });
+  const ok = form.name.trim() !== "";
+  return /* @__PURE__ */ React.createElement(Modal, { onClose, title: extra ? "\u7DE8\u8F2F\u5176\u4ED6\u5B9A\u91CF" : "\u65B0\u589E\u5176\u4ED6\u5B9A\u91CF", onDelete, deleteLabel: form.name }, /* @__PURE__ */ React.createElement(Field, { label: "\u540D\u7A31" }, /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: "\u4F8B\u5982\uFF1A\u91D1\u871C\u6C34\u3001\u767D\u7389", className: "input" })), /* @__PURE__ */ React.createElement(Field, { label: "\u5B9A\u91CF\uFF08\u53EF\u4EE5\u63DB\u884C\uFF09" }, /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      rows: 3,
+      value: form.content,
+      onChange: (e) => setForm({ ...form, content: e.target.value }),
+      placeholder: "\u5927\u676F\uFF1A35g\n\u4E2D\u676F\uFF1A25g",
+      className: "input leading-relaxed"
+    }
+  )), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => ok && onSave({ name: form.name.trim(), content: form.content.trim() }),
+      disabled: !ok,
+      className: "save-btn disabled:opacity-40"
+    },
+    /* @__PURE__ */ React.createElement(Check, { size: 16 }),
+    " \u5132\u5B58"
+  ));
+}
+function HandbookPrint({ handbook }) {
+  const d = /* @__PURE__ */ new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const dateText = `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
+  return /* @__PURE__ */ React.createElement("div", { className: "print-only hb-print" }, /* @__PURE__ */ React.createElement("section", { className: "hb-intro" }, /* @__PURE__ */ React.createElement("div", { className: "hbp-head" }, /* @__PURE__ */ React.createElement("h1", null, "\u98F2\u54C1\u4ECB\u7D39"), /* @__PURE__ */ React.createElement("p", null, dateText)), handbook.categories.map((c) => /* @__PURE__ */ React.createElement("div", { key: c.id, className: "hbp-cat" }, /* @__PURE__ */ React.createElement("h2", null, c.name), c.items.map((it) => /* @__PURE__ */ React.createElement("div", { key: it.id, className: "hbp-item" }, /* @__PURE__ */ React.createElement("div", { className: "hbp-name" }, it.name, "\uFF1A"), /* @__PURE__ */ React.createElement("div", null, it.desc ? /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Highlighted, { text: it.desc, className: "hbp-hl" })) : null, it.rec ? /* @__PURE__ */ React.createElement("div", { className: "hbp-rec" }, "\u63A8\u85A6", /* @__PURE__ */ React.createElement(RecText, { rec: it.rec, mainClass: "hbp-rec-main" })) : null)))))), /* @__PURE__ */ React.createElement("section", { className: "hb-qty" }, /* @__PURE__ */ React.createElement("div", { className: "hbp-head" }, /* @__PURE__ */ React.createElement("h1", null, "\u7269\u6599\u5B9A\u91CF"), /* @__PURE__ */ React.createElement("p", null, dateText)), handbook.qtyEntries.length > 0 && /* @__PURE__ */ React.createElement("table", { className: "hbp-table" }, /* @__PURE__ */ React.createElement("colgroup", null, /* @__PURE__ */ React.createElement("col", { style: { width: "16%" } }), /* @__PURE__ */ React.createElement("col", { style: { width: "28%" } }), /* @__PURE__ */ React.createElement("col", { style: { width: "28%" } }), /* @__PURE__ */ React.createElement("col", { style: { width: "28%" } })), /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null), QTY_COLS.map((c) => /* @__PURE__ */ React.createElement("th", { key: c.key }, c.label, "\u5B9A\u91CF")))), /* @__PURE__ */ React.createElement("tbody", null, handbook.qtyEntries.map((e) => /* @__PURE__ */ React.createElement("tr", { key: e.id }, /* @__PURE__ */ React.createElement("td", { className: "hbp-entry-name" }, String(e.name || "").split(/[\/／]/).map((part, i) => /* @__PURE__ */ React.createElement("div", { key: i }, i > 0 ? "/" : "", part.trim()))), qtyCells(e).map((cell, i) => /* @__PURE__ */ React.createElement("td", { key: i, colSpan: cell.span, className: cell.text ? void 0 : "hbp-na" }, cell.text ? /* @__PURE__ */ React.createElement(QtyLines, { text: cell.text, labelClass: "hbp-label" }) : /* @__PURE__ */ React.createElement(DiagonalLine, { color: "#333" }))))))), handbook.qtyExtras.length > 0 && /* @__PURE__ */ React.createElement("table", { className: "hbp-extras" }, /* @__PURE__ */ React.createElement("tbody", null, handbook.qtyExtras.map((x) => /* @__PURE__ */ React.createElement("tr", { key: x.id }, /* @__PURE__ */ React.createElement("td", { className: "hbp-extra-name" }, x.name), /* @__PURE__ */ React.createElement("td", { className: "hbp-extra-content" }, x.content)))))));
+}
+function PrintStyles() {
+  return /* @__PURE__ */ React.createElement("style", null, `
+      .print-only { display: none; }
+      @media print {
+        @page { size: A4; margin: 14mm 14mm 14mm 14mm; }
+        html, body, #root { height: auto !important; overflow: visible !important; background: #fff !important; }
+        .screen-only { display: none !important; }
+        .print-only { display: block !important; }
+        body[data-print="intro"] .hb-qty, body[data-print="qty"] .hb-intro { display: none !important; }
+        .hb-print { color: #111; font-size: 10.5pt; line-height: 1.65; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .hb-intro + .hb-qty { break-before: page; }
+        .hbp-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1.5pt solid #111; padding-bottom: 3pt; margin-bottom: 8pt; }
+        .hbp-head h1 { font-size: 17pt; font-weight: 800; margin: 0; letter-spacing: 1pt; }
+        .hbp-head p { margin: 0; font-size: 9pt; color: #666; }
+        .hbp-cat h2 { font-size: 14pt; font-weight: 600; color: #445a66; margin: 12pt 0 5pt; break-after: avoid; }
+        .hbp-item { display: grid; grid-template-columns: max-content 1fr; margin-bottom: 7pt; break-inside: avoid; }
+        .hbp-name { color: #780373; font-weight: 600; }
+        .hbp-hl { color: #5b8a1e; font-weight: 600; }
+        .hbp-rec-main { color: #c9211e; font-weight: 600; }
+        .hbp-table, .hbp-extras { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9.5pt; line-height: 1.6; }
+        .hbp-table th, .hbp-table td, .hbp-extras td { border: 0.75pt solid #333; padding: 3pt 6pt; vertical-align: top; text-align: left; }
+        .hbp-table th { font-weight: 600; text-align: center; padding: 6pt 4pt; }
+        .hbp-table tr, .hbp-extras tr { break-inside: avoid; }
+        .hbp-entry-name { text-align: center !important; vertical-align: middle !important; font-weight: 600; }
+        .hbp-label { font-weight: 600; }
+        .hbp-na { position: relative; }
+        .hbp-extras { margin-top: 14pt; }
+        .hbp-extra-name { width: 25%; font-weight: 600; }
+        .hbp-extra-content { white-space: pre-line; }
+      }
+    `);
 }
 function Field({ label, children }) {
   return /* @__PURE__ */ React.createElement("label", { className: "block mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "block text-xs text-stone-500 mb-1" }, label), children);
