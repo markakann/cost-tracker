@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>物料成本</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e7e5e4">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="物料成本">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -1912,6 +1920,14 @@ try {
   document.getElementById("root").innerHTML = '<div style="padding:20px;font-family:monospace;font-size:12px;color:#b91c1c;white-space:pre-wrap;word-break:break-all;text-align:left;">React \u57F7\u884C\u932F\u8AA4\uFF0C\u8ACB\u628A\u9019\u6BB5\u622A\u5716\u7D66 Claude \u770B\uFF1A\n\n' + (err && err.stack ? err.stack : String(err)) + "</div>";
 }
 
+</script>
+<script>
+  // 安裝到手機用：註冊背景程式（sw.js 要跟這個檔案放在同一個資料夾）
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function (e) { console.warn("背景程式註冊失敗", e); });
+    });
+  }
 </script>
 </body>
 </html>
